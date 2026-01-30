@@ -4,12 +4,15 @@ import {
     Link,
     Scripts,
     createRootRoute,
+    useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { useServerFn } from "@tanstack/react-start";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
+import { logoutFn } from "~/utils/auth";
 import { seo } from "~/utils/seo";
 
 export const Route = createRootRoute({
@@ -63,6 +66,16 @@ export const Route = createRootRoute({
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
+    const navigate = Route.useNavigate();
+    const logoutServerFn = useServerFn(logoutFn);
+
+    const handleLogout = async () => {
+        await logoutServerFn();
+        await router.invalidate();
+        navigate({ to: "/" });
+    };
+
     return (
         <html>
             <head>
@@ -77,6 +90,16 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     <Link to="/protected" activeProps={{ className: "font-bold" }}>
                         Protected
                     </Link>
+                    {" | "}
+                    <Link to="/login" activeProps={{ className: "font-bold" }}>
+                        Login
+                    </Link>
+                    <button
+                        onClick={handleLogout}
+                        className="ms-auto pe-2 cursor-pointer hover:underline"
+                    >
+                        Logout
+                    </button>
                 </div>
                 <hr />
                 {children}

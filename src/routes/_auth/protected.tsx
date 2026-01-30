@@ -5,7 +5,11 @@ export const Route = createFileRoute("/_auth/protected")({
 });
 
 function RouteComponent() {
+    const { user } = Route.useRouteContext();
+
     return (
-        <div className="p-2">Hello "/_auth/protected"!</div>
+        <div className="p-2">
+            Welcome, {user.email}!
+        </div>
     );
 }
