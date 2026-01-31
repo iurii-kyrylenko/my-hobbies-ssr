@@ -1,4 +1,6 @@
-import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { FormEvent, useState } from "react";
 import z from "zod";
 import { getCurrentUserFn, loginFn } from "~/utils/auth";
 
@@ -8,17 +10,37 @@ export const Route = createFileRoute("/login")({
     validateSearch: z.object({
         redirect: z.string().optional().catch(""),
     }),
-    beforeLoad: async ({ context, search }) => {
+    beforeLoad: async ({ search }) => {
         if (await getCurrentUserFn()) {
             throw redirect({ to: search.redirect || fallback });
         }
     },
     component: RouteComponent,
-})
+});
 
 function RouteComponent() {
     const search = Route.useSearch();
-    const actionUrl = `${loginFn.url}?redirect=${encodeURIComponent(search?.redirect || fallback)}`;
+    const loginServerFn = useServerFn(loginFn);
+    const [error, setError] = useState("");
+
+    const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault()
+            const data = new FormData(e.currentTarget);
+
+            const email = data.get("email")?.toString() ?? "";
+            const password = data.get("password")?.toString() ?? "";
+            const redirectTo = search.redirect ?? fallback;
+
+            const result = await loginServerFn({ data: { email, password, redirectTo } });
+
+            if (result) {
+                setError(result.error);
+            }
+        } catch (error) {
+            console.error('Error logging in: ', error);
+        }
+    };
 
     return (
         <div className="p-2 grid gap-2 place-items-center">
@@ -28,7 +50,7 @@ function RouteComponent() {
             ) : (
                 <p>Login to see all the cool content in here.</p>
             )}
-            <form className="mt-4 max-w-lg" action={actionUrl} method="post">
+            <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
                 <fieldset className="w-full grid gap-2">
                     <div className="grid gap-2 items-center min-w-[300px]">
                         <label htmlFor="email" className="text-sm font-medium">
@@ -38,7 +60,7 @@ function RouteComponent() {
                             id="email"
                             name="email"
                             placeholder="Enter your email"
-                            type="email"
+                            type="text"
                             className="border rounded-md p-2 w-full"
                             required
                         />
@@ -51,17 +73,17 @@ function RouteComponent() {
                             id="password"
                             name="password"
                             placeholder="Enter your password"
-                            type="password"
+                            type="text"
                             className="border rounded-md p-2 w-full"
                             required
                         />
                     </div>
-                    {/* Alternative option. To not modify the URL, we can pass the redirect path
-                    as a hidden input within the form itself: */}
-                    {/* <input type="hidden" name="redirect" value={search?.redirect || fallback} /> */}
+                    <div className="text-red-500">
+                        {error}
+                    </div>
                     <button
                         type="submit"
-                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
+                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
                     >
                         Login
                     </button>
