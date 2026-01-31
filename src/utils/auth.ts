@@ -1,5 +1,6 @@
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { useAppSession } from "./session";
 
 interface User {
@@ -28,12 +29,16 @@ const getUserById = (userId: string) =>
     );
 
 export const loginFn = createServerFn({ method: "POST" })
-    .inputValidator((data: { email: string; password: string }) => data)
+    .inputValidator((data: FormData) => {
+        const email = data.get('email') as string;
+        const password = data.get('password') as string;
+        return { email, password };
+    })
     .handler(async ({ data }) => {
-        const user = await authenticateUser(data.email, data.password)
+        const user = await authenticateUser(data.email, data.password);
 
         if (!user) {
-            return { error: 'Invalid credentials' }
+            throw Response.json({ message: "Invalid credentials" }, { status: 401 });
         }
 
         // Create session
@@ -44,7 +49,10 @@ export const loginFn = createServerFn({ method: "POST" })
         });
 
         // Redirect to protected area
-        throw redirect({ to: "/protected" });
+        const request = getRequest();
+        const url = new URL(request.url);
+        const redirectTo = url.searchParams.get("redirect") || "/protected-1";
+        throw redirect({ to: redirectTo });
     });
 
 export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
