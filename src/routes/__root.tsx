@@ -12,7 +12,7 @@ import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
-import { logoutFn } from "~/utils/auth";
+import { User, getCurrentUserFn, logoutFn } from "~/utils/auth";
 import { seo } from "~/utils/seo";
 
 export const Route = createRootRoute({
@@ -63,12 +63,17 @@ export const Route = createRootRoute({
     errorComponent: DefaultCatchBoundary,
     notFoundComponent: () => <NotFound />,
     shellComponent: RootDocument,
+    beforeLoad: async () => {
+        const user = await getCurrentUserFn();
+        return { user };
+    },
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const navigate = Route.useNavigate();
     const logoutServerFn = useServerFn(logoutFn);
+    const ctxt = Route.useRouteContext();
 
     const handleLogout = async () => {
         await logoutServerFn();
@@ -94,16 +99,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     <Link to="/protected-2" activeProps={{ className: "font-bold" }}>
                         Protected-2
                     </Link>
-                    {" | "}
-                    <Link to="/login" activeProps={{ className: "font-bold" }}>
-                        Login
-                    </Link>
-                    <button
-                        onClick={handleLogout}
-                        className="ms-auto pe-2 cursor-pointer hover:underline"
-                    >
-                        Logout
-                    </button>
+                    <AuthControl user={ctxt.user} onLogout={handleLogout} />
                 </div>
                 <hr />
                 {children}
@@ -111,5 +107,28 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <Scripts />
             </body>
         </html>
+    );
+}
+
+function AuthControl({ user, onLogout }: { user: User | null, onLogout: () => Promise<void> }) {
+    return (
+        <div className="inline-block ms-auto pe-2">
+            {!user ? (
+                <Link to="/login" activeProps={{ className: "font-bold" }}>
+                    Login
+                </Link>
+            ) : (
+                <>
+                    <span>{user.email}</span>
+                    {" → "}
+                    <button
+                        onClick={onLogout}
+                        className="cursor-pointer hover:underline"
+                    >
+                        Logout
+                    </button>
+                </>
+            )}
+        </div>
     );
 }

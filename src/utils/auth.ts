@@ -2,7 +2,7 @@ import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useAppSession } from "./session";
 
-interface User {
+export interface User {
     id: string;
     email: string;
     password: string;
@@ -24,7 +24,7 @@ const authenticateUser = (email: string, password: string) =>
 
 const getUserById = (userId: string) =>
     Promise.resolve(
-        mockUsers.find((user) => user.id === userId)
+        mockUsers.find((user) => user.id === userId) ?? null
     );
 
 export const loginFn = createServerFn({ method: "POST" })

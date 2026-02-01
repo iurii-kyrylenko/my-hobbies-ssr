@@ -48,7 +48,7 @@ function RouteComponent() {
             {search.redirect ? (
                 <p className="text-red-500">You need to login to access this page.</p>
             ) : (
-                <p>Login to see all the cool content in here.</p>
+                <p>Login to see the protected content.</p>
             )}
             <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
                 <fieldset className="w-full grid gap-2">
@@ -60,7 +60,7 @@ function RouteComponent() {
                             id="email"
                             name="email"
                             placeholder="Enter your email"
-                            type="text"
+                            type="email"
                             className="border rounded-md p-2 w-full"
                             required
                         />
@@ -73,7 +73,7 @@ function RouteComponent() {
                             id="password"
                             name="password"
                             placeholder="Enter your password"
-                            type="text"
+                            type="password"
                             className="border rounded-md p-2 w-full"
                             required
                         />
