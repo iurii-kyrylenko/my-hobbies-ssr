@@ -119,7 +119,9 @@ function AuthControl({ user, onLogout }: { user: User | null, onLogout: () => Pr
                 </Link>
             ) : (
                 <>
-                    <span>{user.email}</span>
+                    <span className="cursor-pointer" title={JSON.stringify(user, null, 2)}>
+                        {user.name}
+                    </span>
                     {" → "}
                     <button
                         onClick={onLogout}

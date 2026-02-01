@@ -5,21 +5,31 @@ import { useAppSession } from "./session";
 export interface User {
     id: string;
     email: string;
+    name: string;
+    shareBooks: boolean;
+    shareMovies: boolean;
+}
+
+interface UserRecord extends User {
+    // todo: salt + hash
     password: string;
 }
 
-const mockUsers: User[] = Array.from(
+const mockUsers: UserRecord[] = Array.from(
     { length: 100 },
     (_, i) => ({
         id: i.toString(),
         email: `user${i}@gmail.com`,
+        name: `user${i}`,
         password: `${i}${i}`,
+        shareBooks: true,
+        shareMovies: true,
     })
 );
 
 const authenticateUser = (email: string, password: string) =>
     Promise.resolve(
-        mockUsers.find((user) => user.email === email && user.password === password)
+        mockUsers.find((user) => user.email === email && user.password === password) ?? null
     );
 
 const getUserById = (userId: string) =>
@@ -39,8 +49,9 @@ export const loginFn = createServerFn({ method: "POST" })
         // Create session
         const session = await useAppSession();
         await session.update({
-            userId: user.id,
+            sub: user.id,
             email: user.email,
+            name: user.name,
         });
 
         // Redirect to protected area
@@ -54,14 +65,19 @@ export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
 });
 
 export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(
-    async () => {
+    async (): Promise<User | null> => {
         const session = await useAppSession();
-        const userId = session.data.userId;
-
+        const userId = session.data.sub;
         if (!userId) {
             return null;
         }
 
-        return await getUserById(userId);
+        const user = await getUserById(userId);
+        if (!user) {
+            return null;
+        }
+
+        const { password, ...publicData } = user;
+        return publicData;
     },
 );
