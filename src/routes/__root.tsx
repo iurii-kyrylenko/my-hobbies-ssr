@@ -2,18 +2,20 @@
 import {
     HeadContent,
     Link,
+    Outlet,
     Scripts,
     createRootRoute,
     useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useServerFn } from "@tanstack/react-start";
-import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
+import { ThemeProvider, useTheme } from "~/components/theme-provider";
 import appCss from "~/styles/app.css?url";
-import { User, getCurrentUserFn, logoutFn } from "~/utils/auth";
+import { getCurrentUserFn, logoutFn } from "~/utils/auth";
 import { seo } from "~/utils/seo";
+import { getThemeServerFn } from "~/utils/theme";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -62,47 +64,27 @@ export const Route = createRootRoute({
     }),
     errorComponent: DefaultCatchBoundary,
     notFoundComponent: () => <NotFound />,
-    shellComponent: RootDocument,
+    component: RootComponent,
     beforeLoad: async () => {
         const user = await getCurrentUserFn();
         return { user };
     },
+    loader: () => getThemeServerFn(),
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
-    const router = useRouter();
-    const navigate = Route.useNavigate();
-    const logoutServerFn = useServerFn(logoutFn);
-    const ctxt = Route.useRouteContext();
-
-    const handleLogout = async () => {
-        await logoutServerFn();
-        await router.invalidate();
-        navigate({ to: "/" });
-    };
+function RootComponent() {
+    const theme = Route.useLoaderData();
 
     return (
-        <html>
+        <html className={theme} lang="en" suppressHydrationWarning>
             <head>
                 <HeadContent />
             </head>
             <body>
-                <div className="p-2 flex gap-2 text-lg">
-                    <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
-                        Home
-                    </Link>
-                    {" | "}
-                    <Link to="/protected-1" activeProps={{ className: "font-bold" }}>
-                        Protected-1
-                    </Link>
-                    {" | "}
-                    <Link to="/protected-2" activeProps={{ className: "font-bold" }}>
-                        Protected-2
-                    </Link>
-                    <AuthControl user={ctxt.user} onLogout={handleLogout} />
-                </div>
-                <hr />
-                {children}
+                <ThemeProvider theme={theme}>
+                    <AppBar />
+                    <Outlet />
+                </ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
                 <Scripts />
             </body>
@@ -110,7 +92,54 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     );
 }
 
-function AuthControl({ user, onLogout }: { user: User | null, onLogout: () => Promise<void> }) {
+function AppBar() {
+    return (
+        <>
+            <div className="p-2 flex gap-2 text-lg">
+                <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
+                    Home
+                </Link>
+                {" | "}
+                <Link to="/protected-1" activeProps={{ className: "font-bold" }}>
+                    Protected-1
+                </Link>
+                {" | "}
+                <Link to="/protected-2" activeProps={{ className: "font-bold" }}>
+                    Protected-2
+                </Link>
+                <ChangeTheme />
+                <AuthControl />
+            </div>
+            <hr />
+        </>
+    );
+}
+
+function ChangeTheme() {
+    const { theme, setTheme } = useTheme();
+
+    return (
+        <button
+            className="ms-auto cursor-pointer hover:underline"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+            {theme}
+        </button>
+    );
+}
+
+function AuthControl() {
+    const router = useRouter();
+    const navigate = Route.useNavigate();
+    const logoutServerFn = useServerFn(logoutFn);
+    const { user } = Route.useRouteContext();
+
+    const handleLogout = async () => {
+        await logoutServerFn();
+        await router.invalidate();
+        navigate({ to: "/" });
+    };
+
     return (
         <div className="inline-block ms-auto pe-2">
             {!user ? (
@@ -124,7 +153,7 @@ function AuthControl({ user, onLogout }: { user: User | null, onLogout: () => Pr
                     </span>
                     {" → "}
                     <button
-                        onClick={onLogout}
+                        onClick={handleLogout}
                         className="cursor-pointer hover:underline"
                     >
                         Logout

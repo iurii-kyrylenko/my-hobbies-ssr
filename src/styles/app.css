@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Define dark mode to trigger when the .dark class is present */
+@variant dark (&:where(.dark, .dark *));
+
 @layer base {
 
     *,
