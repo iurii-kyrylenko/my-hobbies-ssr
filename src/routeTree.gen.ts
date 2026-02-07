@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PagingRouteImport } from './routes/paging'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -16,6 +17,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthProtected2RouteImport } from './routes/_auth/protected-2'
 import { Route as AuthProtected1RouteImport } from './routes/_auth/protected-1'
 
+const PagingRoute = PagingRouteImport.update({
+  id: '/paging',
+  path: '/paging',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/paging': typeof PagingRoute
   '/protected-1': typeof AuthProtected1Route
   '/protected-2': typeof AuthProtected2Route
 }
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/paging': typeof PagingRoute
   '/protected-1': typeof AuthProtected1Route
   '/protected-2': typeof AuthProtected2Route
 }
@@ -66,6 +74,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/paging': typeof PagingRoute
   '/_auth/protected-1': typeof AuthProtected1Route
   '/_auth/protected-2': typeof AuthProtected2Route
 }
@@ -75,16 +84,24 @@ export interface FileRouteTypes {
     | '/'
     | '/customScript.js'
     | '/login'
+    | '/paging'
     | '/protected-1'
     | '/protected-2'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customScript.js' | '/login' | '/protected-1' | '/protected-2'
+  to:
+    | '/'
+    | '/customScript.js'
+    | '/login'
+    | '/paging'
+    | '/protected-1'
+    | '/protected-2'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/customScript.js'
     | '/login'
+    | '/paging'
     | '/_auth/protected-1'
     | '/_auth/protected-2'
   fileRoutesById: FileRoutesById
@@ -94,10 +111,18 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
+  PagingRoute: typeof PagingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/paging': {
+      id: '/paging'
+      path: '/paging'
+      fullPath: '/paging'
+      preLoaderRoute: typeof PagingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -162,6 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
+  PagingRoute: PagingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

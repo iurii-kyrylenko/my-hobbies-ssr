@@ -1,10 +1,11 @@
 /// <reference types="vite/client" />
+import { QueryClient } from "@tanstack/react-query";
 import {
     HeadContent,
     Link,
     Outlet,
     Scripts,
-    createRootRoute,
+    createRootRouteWithContext,
     useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -17,7 +18,13 @@ import { getCurrentUserFn, logoutFn } from "~/utils/auth";
 import { seo } from "~/utils/seo";
 import { getThemeServerFn } from "~/utils/theme";
 
-export const Route = createRootRoute({
+// The rootRoute acts as the "source of truth" for the context available to all child routes
+// So we have to use createRootRouteWithContext instead of createRootRoute.
+interface MyRouterContext {
+    queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
     head: () => ({
         meta: [
             {
@@ -106,6 +113,10 @@ function AppBar() {
                 {" | "}
                 <Link to="/protected-2" activeProps={{ className: "font-bold" }}>
                     Protected-2
+                </Link>
+                {" | "}
+                <Link to="/paging" activeProps={{ className: "font-bold" }}>
+                    Paging
                 </Link>
                 <ChangeTheme />
                 <AuthControl />
