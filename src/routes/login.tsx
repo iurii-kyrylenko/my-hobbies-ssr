@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import z from "zod";
 import { getCurrentUserFn, loginFn } from "~/utils/auth";
 
-const fallback = "/protected-1" as const;
+const fallback = "/protected" as const;
 
 export const Route = createFileRoute("/login")({
     validateSearch: z.object({

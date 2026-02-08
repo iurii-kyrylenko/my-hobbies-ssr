@@ -14,8 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthProtected2RouteImport } from './routes/_auth/protected-2'
-import { Route as AuthProtected1RouteImport } from './routes/_auth/protected-1'
+import { Route as AuthProtectedRouteImport } from './routes/_auth/protected'
 
 const PagingRoute = PagingRouteImport.update({
   id: '/paging',
@@ -41,14 +40,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthProtected2Route = AuthProtected2RouteImport.update({
-  id: '/protected-2',
-  path: '/protected-2',
-  getParentRoute: () => AuthRouteRoute,
-} as any)
-const AuthProtected1Route = AuthProtected1RouteImport.update({
-  id: '/protected-1',
-  path: '/protected-1',
+const AuthProtectedRoute = AuthProtectedRouteImport.update({
+  id: '/protected',
+  path: '/protected',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -57,16 +51,14 @@ export interface FileRoutesByFullPath {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
-  '/protected-1': typeof AuthProtected1Route
-  '/protected-2': typeof AuthProtected2Route
+  '/protected': typeof AuthProtectedRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
-  '/protected-1': typeof AuthProtected1Route
-  '/protected-2': typeof AuthProtected2Route
+  '/protected': typeof AuthProtectedRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -75,26 +67,13 @@ export interface FileRoutesById {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
-  '/_auth/protected-1': typeof AuthProtected1Route
-  '/_auth/protected-2': typeof AuthProtected2Route
+  '/_auth/protected': typeof AuthProtectedRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/customScript.js'
-    | '/login'
-    | '/paging'
-    | '/protected-1'
-    | '/protected-2'
+  fullPaths: '/' | '/customScript.js' | '/login' | '/paging' | '/protected'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/customScript.js'
-    | '/login'
-    | '/paging'
-    | '/protected-1'
-    | '/protected-2'
+  to: '/' | '/customScript.js' | '/login' | '/paging' | '/protected'
   id:
     | '__root__'
     | '/'
@@ -102,8 +81,7 @@ export interface FileRouteTypes {
     | '/customScript.js'
     | '/login'
     | '/paging'
-    | '/_auth/protected-1'
-    | '/_auth/protected-2'
+    | '/_auth/protected'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -151,31 +129,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/protected-2': {
-      id: '/_auth/protected-2'
-      path: '/protected-2'
-      fullPath: '/protected-2'
-      preLoaderRoute: typeof AuthProtected2RouteImport
-      parentRoute: typeof AuthRouteRoute
-    }
-    '/_auth/protected-1': {
-      id: '/_auth/protected-1'
-      path: '/protected-1'
-      fullPath: '/protected-1'
-      preLoaderRoute: typeof AuthProtected1RouteImport
+    '/_auth/protected': {
+      id: '/_auth/protected'
+      path: '/protected'
+      fullPath: '/protected'
+      preLoaderRoute: typeof AuthProtectedRouteImport
       parentRoute: typeof AuthRouteRoute
     }
   }
 }
 
 interface AuthRouteRouteChildren {
-  AuthProtected1Route: typeof AuthProtected1Route
-  AuthProtected2Route: typeof AuthProtected2Route
+  AuthProtectedRoute: typeof AuthProtectedRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthProtected1Route: AuthProtected1Route,
-  AuthProtected2Route: AuthProtected2Route,
+  AuthProtectedRoute: AuthProtectedRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

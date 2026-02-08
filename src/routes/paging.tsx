@@ -68,13 +68,15 @@ function RouteComponent() {
             ))}
 
             <button
-                className="mt-2"
+                className="my-2 p-2 border rounded-md"
                 onClick={() => fetchNextPage()}
                 disabled={!hasNextPage || isFetchingNextPage}
             >
                 {isFetchingNextPage
                     ? "Loading..."
-                    : hasNextPage ? "Load More" : "Nothing more to load"
+                    : hasNextPage
+                        ? <span className="cursor-pointer hover:underline">Load More</span>
+                        : "Nothing more to load"
                 }
             </button>
         </div>

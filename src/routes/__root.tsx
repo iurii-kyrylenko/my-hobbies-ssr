@@ -6,10 +6,14 @@ import {
     Outlet,
     Scripts,
     createRootRouteWithContext,
+    useLocation,
+    useNavigate,
     useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useServerFn } from "@tanstack/react-start";
+import React from "react";
+import z, { optional } from "zod";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import { ThemeProvider, useTheme } from "~/components/theme-provider";
@@ -23,6 +27,12 @@ import { getThemeServerFn } from "~/utils/theme";
 interface MyRouterContext {
     queryClient: QueryClient;
 }
+
+const searchSchema = z.object({
+    filter: z.string().optional().catch(""),
+});
+
+type ProductSearch = z.infer<typeof searchSchema>;
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
     head: () => ({
@@ -77,6 +87,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         return { user };
     },
     loader: () => getThemeServerFn(),
+    validateSearch: searchSchema,
 });
 
 function RootComponent() {
@@ -100,42 +111,61 @@ function RootComponent() {
 }
 
 function AppBar() {
+    const { filter } = Route.useSearch();
+
     return (
         <>
-            <div className="p-2 flex gap-2 text-lg">
+            <div className="p-2 flex gap-2 text-lg items-baseline">
                 <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
                     Home
                 </Link>
                 {" | "}
-                <Link to="/protected-1" activeProps={{ className: "font-bold" }}>
-                    Protected-1
+                <Link to="/protected" activeProps={{ className: "font-bold" }}>
+                    Protected
                 </Link>
                 {" | "}
-                <Link to="/protected-2" activeProps={{ className: "font-bold" }}>
-                    Protected-2
-                </Link>
-                {" | "}
-                <Link to="/paging" activeProps={{ className: "font-bold" }}>
+                <Link to="/paging" search={{ filter: filter }} activeProps={{ className: "font-bold" }}>
                     Paging
                 </Link>
-                <ChangeTheme />
-                <AuthControl />
+                <div className="inline-block ms-auto">
+                    <Filter />
+                </div>
+                <div className="inline-block ms-auto pe-2">
+                    <AuthControl />
+                    {" | "}
+                    <ChangeTheme />
+                </div>
             </div>
             <hr />
         </>
     );
 }
 
-function ChangeTheme() {
-    const { theme, setTheme } = useTheme();
+function Filter() {
+    const navigate = useNavigate({ from: Route.fullPath });
+    const { filter } = Route.useSearch();
+    const { pathname } = useLocation();
+    const [filterDraft, setFilterDraft] = React.useState(filter ?? "");
+
+    React.useEffect(() => {
+        if (["/paging"].includes(pathname)) {
+            navigate({
+                to: pathname,
+                search: { filter: filterDraft },
+                replace: true,
+            })
+        }
+    }, [filterDraft, pathname])
 
     return (
-        <button
-            className="ms-auto cursor-pointer hover:underline"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        <input
+            className="border rounded-md p-2"
+            type="search"
+            placeholder="Filter"
+            value={filterDraft}
+            onChange={(e) => setFilterDraft(e.target.value)}
         >
-            {theme}
-        </button>
+        </input>
     );
 }
 
@@ -152,7 +182,7 @@ function AuthControl() {
     };
 
     return (
-        <div className="inline-block ms-auto pe-2">
+        <>
             {!user ? (
                 <Link to="/login" activeProps={{ className: "font-bold" }}>
                     Login
@@ -171,6 +201,19 @@ function AuthControl() {
                     </button>
                 </>
             )}
-        </div>
+        </>
+    );
+}
+
+function ChangeTheme() {
+    const { theme, setTheme } = useTheme();
+
+    return (
+        <button
+            className="cursor-pointer hover:underline"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        >
+            {theme}
+        </button>
     );
 }

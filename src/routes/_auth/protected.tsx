@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_auth/protected-1")({
+export const Route = createFileRoute("/_auth/protected")({
     component: RouteComponent,
 });
 
@@ -9,7 +9,7 @@ function RouteComponent() {
 
     return (
         <div className="p-2">
-            <h1>Protected 1</h1>
+            <h1>Protected</h1>
             Welcome, {user.email}!
         </div>
     );
