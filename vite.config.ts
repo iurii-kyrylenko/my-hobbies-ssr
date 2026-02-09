@@ -19,4 +19,12 @@ export default defineConfig({
         viteReact(),
         nitro(),
     ],
+    optimizeDeps: {
+        // Exclude this server-side dependency to avoid bundling errors
+        exclude: ['mongodb-client-encryption'],
+    },
+    ssr: {
+        // Ensure this module is externalized during server-side rendering
+        external: ['mongodb-client-encryption'],
+    },
 });

@@ -127,6 +127,14 @@ function AppBar() {
                 <Link to="/paging" search={{ filter: filter }} activeProps={{ className: "font-bold" }}>
                     Paging
                 </Link>
+                {" | "}
+                <Link to="/books" activeProps={{ className: "font-bold" }}>
+                    Books
+                </Link>
+                {" | "}
+                <Link to="/books_ssr" activeProps={{ className: "font-bold" }}>
+                    Books-SSR
+                </Link>
                 <div className="inline-block ms-auto">
                     <Filter />
                 </div>

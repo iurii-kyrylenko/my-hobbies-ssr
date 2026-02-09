@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PagingRouteImport } from './routes/paging'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
+import { Route as Books_ssrRouteImport } from './routes/books_ssr'
+import { Route as BooksRouteImport } from './routes/books'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthProtectedRouteImport } from './routes/_auth/protected'
@@ -31,6 +33,16 @@ const CustomScriptDotjsRoute = CustomScriptDotjsRouteImport.update({
   path: '/customScript.js',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Books_ssrRoute = Books_ssrRouteImport.update({
+  id: '/books_ssr',
+  path: '/books_ssr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BooksRoute = BooksRouteImport.update({
+  id: '/books',
+  path: '/books',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -48,6 +60,8 @@ const AuthProtectedRoute = AuthProtectedRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/books': typeof BooksRoute
+  '/books_ssr': typeof Books_ssrRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
@@ -55,6 +69,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/books': typeof BooksRoute
+  '/books_ssr': typeof Books_ssrRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
@@ -64,6 +80,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
+  '/books': typeof BooksRoute
+  '/books_ssr': typeof Books_ssrRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/paging': typeof PagingRoute
@@ -71,13 +89,29 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/customScript.js' | '/login' | '/paging' | '/protected'
+  fullPaths:
+    | '/'
+    | '/books'
+    | '/books_ssr'
+    | '/customScript.js'
+    | '/login'
+    | '/paging'
+    | '/protected'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customScript.js' | '/login' | '/paging' | '/protected'
+  to:
+    | '/'
+    | '/books'
+    | '/books_ssr'
+    | '/customScript.js'
+    | '/login'
+    | '/paging'
+    | '/protected'
   id:
     | '__root__'
     | '/'
     | '/_auth'
+    | '/books'
+    | '/books_ssr'
     | '/customScript.js'
     | '/login'
     | '/paging'
@@ -87,6 +121,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  BooksRoute: typeof BooksRoute
+  Books_ssrRoute: typeof Books_ssrRoute
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
   PagingRoute: typeof PagingRoute
@@ -113,6 +149,20 @@ declare module '@tanstack/react-router' {
       path: '/customScript.js'
       fullPath: '/customScript.js'
       preLoaderRoute: typeof CustomScriptDotjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/books_ssr': {
+      id: '/books_ssr'
+      path: '/books_ssr'
+      fullPath: '/books_ssr'
+      preLoaderRoute: typeof Books_ssrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/books': {
+      id: '/books'
+      path: '/books'
+      fullPath: '/books'
+      preLoaderRoute: typeof BooksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -154,6 +204,8 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  BooksRoute: BooksRoute,
+  Books_ssrRoute: Books_ssrRoute,
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
   PagingRoute: PagingRoute,
