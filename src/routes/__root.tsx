@@ -13,7 +13,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useServerFn } from "@tanstack/react-start";
 import React from "react";
-import z, { optional } from "zod";
+import z from "zod";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import { ThemeProvider, useTheme } from "~/components/theme-provider";
@@ -128,7 +128,7 @@ function AppBar() {
                     Paging
                 </Link>
                 {" | "}
-                <Link to="/books" activeProps={{ className: "font-bold" }}>
+                <Link to="/books" search={{ filter: filter }} activeProps={{ className: "font-bold" }}>
                     Books
                 </Link>
                 <div className="inline-block ms-auto">
@@ -152,14 +152,18 @@ function Filter() {
     const [filterDraft, setFilterDraft] = React.useState(filter ?? "");
 
     React.useEffect(() => {
-        if (["/paging"].includes(pathname)) {
-            navigate({
-                to: pathname,
-                search: { filter: filterDraft },
-                replace: true,
-            })
-        }
-    }, [filterDraft, pathname])
+        // Debounce of user input
+        // const timer = setTimeout(() => {
+            if (["/paging", "/books"].includes(pathname)) {
+                navigate({
+                    to: pathname,
+                    search: { filter: filterDraft },
+                    replace: true,
+                });
+            }
+        // }, 800);
+        // return () => clearTimeout(timer);
+    }, [filterDraft, pathname]);
 
     return (
         <input

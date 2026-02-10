@@ -22,26 +22,42 @@ interface Book {
     googleBookId: string;
 }
 
-export const getAllBooks = createServerFn({ method: 'GET' })
-    .handler(async (): Promise<Book[]> => {
+export interface BooksPage {
+    books: Book[];
+    page: number;
+}
+
+export const pageSize = 10;
+
+export const getPageBooks = createServerFn({ method: 'GET' })
+    .inputValidator((d: { userId: string, filter?: string, page: number }) => d)
+    .handler(async ({ data }): Promise<BooksPage> => {
+        const skipAmount = (data.page - 1) * pageSize;
+
         const db = await connectToDatabase();
 
-        const books = await db
+        const documents = await db
             .collection<BookDoc>("books")
-            .find()
-            .sort({ _id: -1 })
-            .limit(10)
+            .find({
+                userId: new ObjectId(data.userId),
+                ...filterCondition(data.filter),
+            })
+            .sort({ completed: -1 })
+            .skip(skipAmount)
+            .limit(pageSize)
             .toArray();
 
-        return books.map((book) => ({
+        const books = documents.map((book) => ({
             ...book,
             _id: book._id.toString(),
             userId: book.userId.toString(),
             completed: book.completed.toISOString(),
         }));
+
+        return { books, page: data.page };
     });
 
-const filterCondition = (filter: string) => {
+const filterCondition = (filter?: string) => {
     let condition = {};
 
     if (filter) {
@@ -66,31 +82,4 @@ const filterCondition = (filter: string) => {
     }
 
     return condition;
-}
-
-export const getPageBooks = createServerFn({ method: 'GET' })
-    .inputValidator((d: { userId: string, filter: string, page: number }) => d)
-    .handler(async ({ data }): Promise<Book[]> => {
-        const pageSize = 5;
-        const skipAmount = (data.page - 1) * pageSize;
-
-        const db = await connectToDatabase();
-
-        const books = await db
-            .collection<BookDoc>("books")
-            .find({
-                userId: new ObjectId(data.userId),
-                ...filterCondition(data.filter),
-            })
-            .sort({ completed: -1 })
-            .skip(skipAmount)
-            .limit(pageSize)
-            .toArray();
-
-        return books.map((book) => ({
-            ...book,
-            _id: book._id.toString(),
-            userId: book.userId.toString(),
-            completed: book.completed.toISOString(),
-        }));
-    }); 
+};

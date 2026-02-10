@@ -1,34 +1,68 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { infiniteQueryOptions, useInfiniteQuery, } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { getPageBooks } from "~/server/books";
+import React from "react";
+import { BooksPage, getPageBooks, pageSize } from "~/server/books";
 
-
-export const booksQueryOptions = () =>
-    queryOptions({
-        queryKey: ["books"],
-        queryFn: () => getPageBooks({
+export const booksQueryOptions = (filter?: string) =>
+    infiniteQueryOptions({
+        queryKey: ["books", filter],
+        queryFn: async ({ pageParam = 1 }): Promise<BooksPage> => getPageBooks({
             data: {
                 userId: "57a8ba0bd901937c0275bce5",
-                filter: "c 2019",
-                // filter: "tony",
-                page: 1,
+                filter,
+                page: pageParam,
             },
         }),
+        getNextPageParam: (lastPage) =>
+            lastPage.books.length === pageSize ? lastPage.page + 1 : undefined,
+        initialPageParam: 1,
         staleTime: 1000 * 60,
     });
 
 export const Route = createFileRoute("/books")({
+    loaderDeps: ({ search }) => ({
+        filter: search.filter,
+    }),
+    loader: async ({ context: { queryClient }, deps: { filter } }) => {
+        // Prefetch the first page on the server
+        await queryClient.prefetchInfiniteQuery(booksQueryOptions(filter));
+    },
     component: RouteComponent,
-    loader: async ({ context: { queryClient } }) =>
-        queryClient.ensureQueryData(booksQueryOptions()),
 });
 
 function RouteComponent() {
-    const data = Route.useLoaderData();
+    const { filter } = Route.useSearch();
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery(booksQueryOptions(filter));
 
     return (
-        <pre>
-            {JSON.stringify(data, null, 2)}
-        </pre>
+        <div>
+            {data?.pages.map((page, i) => (
+                <React.Fragment key={i}>
+                    {page.books.map((book) => (
+                        <pre key={book._id}>
+                            {JSON.stringify(book, null, 2)}
+                        </pre>
+                    ))}
+                </React.Fragment>
+            ))}
+
+            <button
+                className="my-2 p-2 border rounded-md"
+                onClick={() => fetchNextPage()}
+                disabled={!hasNextPage || isFetchingNextPage}
+            >
+                {isFetchingNextPage
+                    ? "Loading..."
+                    : hasNextPage
+                        ? <span className="cursor-pointer hover:underline">Load More</span>
+                        : "Nothing more to load"
+                }
+            </button>
+        </div>
     );
 }
