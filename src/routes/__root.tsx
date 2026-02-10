@@ -32,7 +32,7 @@ const searchSchema = z.object({
     filter: z.string().optional().catch(""),
 });
 
-type ProductSearch = z.infer<typeof searchSchema>;
+type Search = z.infer<typeof searchSchema>;
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
     head: () => ({
@@ -130,10 +130,6 @@ function AppBar() {
                 {" | "}
                 <Link to="/books" activeProps={{ className: "font-bold" }}>
                     Books
-                </Link>
-                {" | "}
-                <Link to="/books_ssr" activeProps={{ className: "font-bold" }}>
-                    Books-SSR
                 </Link>
                 <div className="inline-block ms-auto">
                     <Filter />
