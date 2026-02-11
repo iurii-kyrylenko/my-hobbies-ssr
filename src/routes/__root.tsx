@@ -132,12 +132,12 @@ function AppBar() {
                     Protected
                 </Link>
                 {" | "}
-                <Link to="/paging" activeProps={{ className: "font-bold" }}>
-                    Paging
-                </Link>
-                {" | "}
                 <Link to="/books" activeProps={{ className: "font-bold" }}>
                     Books
+                </Link>
+                {" | "}
+                <Link to="/movies" activeProps={{ className: "font-bold" }}>
+                    Movies
                 </Link>
                 <div className="inline-block ms-auto">
                     <Filter />

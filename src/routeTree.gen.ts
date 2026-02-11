@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PagingRouteImport } from './routes/paging'
+import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as BooksRouteImport } from './routes/books'
@@ -20,6 +21,11 @@ import { Route as AuthProtectedRouteImport } from './routes/_auth/protected'
 const PagingRoute = PagingRouteImport.update({
   id: '/paging',
   path: '/paging',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MoviesRoute = MoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
   '/protected': typeof AuthProtectedRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
   '/protected': typeof AuthProtectedRoute
 }
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
+  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
   '/_auth/protected': typeof AuthProtectedRoute
 }
@@ -85,10 +94,18 @@ export interface FileRouteTypes {
     | '/books'
     | '/customScript.js'
     | '/login'
+    | '/movies'
     | '/paging'
     | '/protected'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/books' | '/customScript.js' | '/login' | '/paging' | '/protected'
+  to:
+    | '/'
+    | '/books'
+    | '/customScript.js'
+    | '/login'
+    | '/movies'
+    | '/paging'
+    | '/protected'
   id:
     | '__root__'
     | '/'
@@ -96,6 +113,7 @@ export interface FileRouteTypes {
     | '/books'
     | '/customScript.js'
     | '/login'
+    | '/movies'
     | '/paging'
     | '/_auth/protected'
   fileRoutesById: FileRoutesById
@@ -106,6 +124,7 @@ export interface RootRouteChildren {
   BooksRoute: typeof BooksRoute
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
+  MoviesRoute: typeof MoviesRoute
   PagingRoute: typeof PagingRoute
 }
 
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/paging'
       fullPath: '/paging'
       preLoaderRoute: typeof PagingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/movies': {
+      id: '/movies'
+      path: '/movies'
+      fullPath: '/movies'
+      preLoaderRoute: typeof MoviesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -181,6 +207,7 @@ const rootRouteChildren: RootRouteChildren = {
   BooksRoute: BooksRoute,
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
+  MoviesRoute: MoviesRoute,
   PagingRoute: PagingRoute,
 }
 export const routeTree = rootRouteImport
