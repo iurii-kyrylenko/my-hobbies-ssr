@@ -27,7 +27,7 @@ export interface BooksPage {
     page: number;
 }
 
-export const pageSize = 10;
+export const pageSize = 4;
 
 export const getPageBooks = createServerFn({ method: 'GET' })
     .inputValidator((d: { userId: string, filter?: string, page: number }) => d)

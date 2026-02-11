@@ -6,6 +6,7 @@ import {
     Outlet,
     Scripts,
     createRootRouteWithContext,
+    retainSearchParams,
     useLocation,
     useNavigate,
     useRouter,
@@ -88,6 +89,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     },
     loader: () => getThemeServerFn(),
     validateSearch: searchSchema,
+    search: {
+        // Retain the filter search param while navigating to any route.
+        // The filter search param is set in the Filter component or
+        // directly in the browser address bar, but used only in several
+        // dedicated routes.
+        middlewares: [retainSearchParams(["filter"])],
+    },
 });
 
 function RootComponent() {
@@ -124,11 +132,11 @@ function AppBar() {
                     Protected
                 </Link>
                 {" | "}
-                <Link to="/paging" search={{ filter: filter }} activeProps={{ className: "font-bold" }}>
+                <Link to="/paging" activeProps={{ className: "font-bold" }}>
                     Paging
                 </Link>
                 {" | "}
-                <Link to="/books" search={{ filter: filter }} activeProps={{ className: "font-bold" }}>
+                <Link to="/books" activeProps={{ className: "font-bold" }}>
                     Books
                 </Link>
                 <div className="inline-block ms-auto">
@@ -148,22 +156,20 @@ function AppBar() {
 function Filter() {
     const navigate = useNavigate({ from: Route.fullPath });
     const { filter } = Route.useSearch();
-    const { pathname } = useLocation();
     const [filterDraft, setFilterDraft] = React.useState(filter ?? "");
+    const { pathname } = useLocation();
 
     React.useEffect(() => {
         // Debounce of user input
-        // const timer = setTimeout(() => {
-            if (["/paging", "/books"].includes(pathname)) {
+        const timer = setTimeout(() => {
                 navigate({
                     to: pathname,
                     search: { filter: filterDraft },
                     replace: true,
                 });
-            }
-        // }, 800);
-        // return () => clearTimeout(timer);
-    }, [filterDraft, pathname]);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, [filterDraft]);
 
     return (
         <input
