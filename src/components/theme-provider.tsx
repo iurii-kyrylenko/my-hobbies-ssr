@@ -1,10 +1,8 @@
 import { useRouter } from "@tanstack/react-router";
 import { createContext, type PropsWithChildren, use } from "react";
-import { Theme, setThemeServerFn } from "~/utils/theme";
+import { Theme, setThemeServerFn } from "~/server/theme";
 
 type ThemeContextType = { theme: Theme; setTheme: (val: Theme) => void };
-
-// type Props = PropsWithChildren<{ theme: Theme }>;
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 

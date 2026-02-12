@@ -1,51 +1,52 @@
 import { infiniteQueryOptions, useInfiniteQuery, } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { MoviesPage, getPageMovies, pageSize } from "~/server/movies";
+import { BooksPage, getPageBooks, pageSize } from "~/server/books";
 
-export const moviesQueryOptions = (filter?: string) =>
+export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
-        queryKey: ["movies", filter],
-        queryFn: async ({ pageParam = 1 }): Promise<MoviesPage> => getPageMovies({
+        queryKey: ["books", filter],
+        queryFn: async ({ pageParam = 1 }): Promise<BooksPage> => getPageBooks({
             data: {
-                userId: "57a8ba0bd901937c0275bce5",
+                userId,
                 filter,
                 page: pageParam,
             },
         }),
         getNextPageParam: (lastPage) =>
-            lastPage.movies.length === pageSize ? lastPage.page + 1 : undefined,
+            lastPage.books.length === pageSize ? lastPage.page + 1 : undefined,
         initialPageParam: 1,
         staleTime: 1000 * 60,
     });
 
-export const Route = createFileRoute("/movies")({
+export const Route = createFileRoute("/_auth/books")({
     loaderDeps: ({ search }) => ({
         filter: search.filter,
     }),
-    loader: async ({ context: { queryClient }, deps: { filter } }) => {
+    loader: async ({ context: { queryClient, user }, deps: { filter } }) => {
         // Prefetch the first page on the server
-        await queryClient.prefetchInfiniteQuery(moviesQueryOptions(filter));
+        await queryClient.prefetchInfiniteQuery(booksQueryOptions(user._id, filter));
     },
     component: RouteComponent,
 });
 
 function RouteComponent() {
+    const { user } = Route.useRouteContext();
     const { filter } = Route.useSearch();
     const {
         data,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useInfiniteQuery(moviesQueryOptions(filter));
+    } = useInfiniteQuery(booksQueryOptions(user._id, filter));
 
     return (
         <div>
             {data?.pages.map((page, i) => (
                 <React.Fragment key={i}>
-                    {page.movies.map((movie) => (
-                        <pre key={movie._id}>
-                            {JSON.stringify(movie, null, 2)}
+                    {page.books.map((book) => (
+                        <pre key={book._id}>
+                            {JSON.stringify(book, null, 2)}
                         </pre>
                     ))}
                 </React.Fragment>

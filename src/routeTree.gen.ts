@@ -10,22 +10,16 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PagingRouteImport } from './routes/paging'
-import { Route as MoviesRouteImport } from './routes/movies'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
-import { Route as BooksRouteImport } from './routes/books'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthProtectedRouteImport } from './routes/_auth/protected'
+import { Route as AuthMoviesRouteImport } from './routes/_auth/movies'
+import { Route as AuthBooksRouteImport } from './routes/_auth/books'
 
 const PagingRoute = PagingRouteImport.update({
   id: '/paging',
   path: '/paging',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MoviesRoute = MoviesRouteImport.update({
-  id: '/movies',
-  path: '/movies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -38,11 +32,6 @@ const CustomScriptDotjsRoute = CustomScriptDotjsRouteImport.update({
   path: '/customScript.js',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BooksRoute = BooksRouteImport.update({
-  id: '/books',
-  path: '/books',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -52,79 +41,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthProtectedRoute = AuthProtectedRouteImport.update({
-  id: '/protected',
-  path: '/protected',
+const AuthMoviesRoute = AuthMoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthBooksRoute = AuthBooksRouteImport.update({
+  id: '/books',
+  path: '/books',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
-  '/protected': typeof AuthProtectedRoute
+  '/books': typeof AuthBooksRoute
+  '/movies': typeof AuthMoviesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
-  '/protected': typeof AuthProtectedRoute
+  '/books': typeof AuthBooksRoute
+  '/movies': typeof AuthMoviesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/books': typeof BooksRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/movies': typeof MoviesRoute
   '/paging': typeof PagingRoute
-  '/_auth/protected': typeof AuthProtectedRoute
+  '/_auth/books': typeof AuthBooksRoute
+  '/_auth/movies': typeof AuthMoviesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/books'
     | '/customScript.js'
     | '/login'
-    | '/movies'
     | '/paging'
-    | '/protected'
+    | '/books'
+    | '/movies'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/books'
-    | '/customScript.js'
-    | '/login'
-    | '/movies'
-    | '/paging'
-    | '/protected'
+  to: '/' | '/customScript.js' | '/login' | '/paging' | '/books' | '/movies'
   id:
     | '__root__'
     | '/'
     | '/_auth'
-    | '/books'
     | '/customScript.js'
     | '/login'
-    | '/movies'
     | '/paging'
-    | '/_auth/protected'
+    | '/_auth/books'
+    | '/_auth/movies'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  BooksRoute: typeof BooksRoute
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
-  MoviesRoute: typeof MoviesRoute
   PagingRoute: typeof PagingRoute
 }
 
@@ -135,13 +115,6 @@ declare module '@tanstack/react-router' {
       path: '/paging'
       fullPath: '/paging'
       preLoaderRoute: typeof PagingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/movies': {
-      id: '/movies'
-      path: '/movies'
-      fullPath: '/movies'
-      preLoaderRoute: typeof MoviesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -158,13 +131,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomScriptDotjsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/books': {
-      id: '/books'
-      path: '/books'
-      fullPath: '/books'
-      preLoaderRoute: typeof BooksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -179,22 +145,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_auth/protected': {
-      id: '/_auth/protected'
-      path: '/protected'
-      fullPath: '/protected'
-      preLoaderRoute: typeof AuthProtectedRouteImport
+    '/_auth/movies': {
+      id: '/_auth/movies'
+      path: '/movies'
+      fullPath: '/movies'
+      preLoaderRoute: typeof AuthMoviesRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/books': {
+      id: '/_auth/books'
+      path: '/books'
+      fullPath: '/books'
+      preLoaderRoute: typeof AuthBooksRouteImport
       parentRoute: typeof AuthRouteRoute
     }
   }
 }
 
 interface AuthRouteRouteChildren {
-  AuthProtectedRoute: typeof AuthProtectedRoute
+  AuthBooksRoute: typeof AuthBooksRoute
+  AuthMoviesRoute: typeof AuthMoviesRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthProtectedRoute: AuthProtectedRoute,
+  AuthBooksRoute: AuthBooksRoute,
+  AuthMoviesRoute: AuthMoviesRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -204,10 +179,8 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  BooksRoute: BooksRoute,
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
-  MoviesRoute: MoviesRoute,
   PagingRoute: PagingRoute,
 }
 export const routeTree = rootRouteImport

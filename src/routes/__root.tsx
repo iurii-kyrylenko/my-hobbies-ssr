@@ -19,9 +19,9 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import { ThemeProvider, useTheme } from "~/components/theme-provider";
 import appCss from "~/styles/app.css?url";
-import { getCurrentUserFn, logoutFn } from "~/utils/auth";
+import { getCurrentUserFn, logoutFn } from "~/server/users";
 import { seo } from "~/utils/seo";
-import { getThemeServerFn } from "~/utils/theme";
+import { getThemeServerFn } from "~/server/theme";
 
 // The rootRoute acts as the "source of truth" for the context available to all child routes
 // So we have to use createRootRouteWithContext instead of createRootRoute.
@@ -128,10 +128,6 @@ function AppBar() {
                     Home
                 </Link>
                 {" | "}
-                <Link to="/protected" activeProps={{ className: "font-bold" }}>
-                    Protected
-                </Link>
-                {" | "}
                 <Link to="/books" activeProps={{ className: "font-bold" }}>
                     Books
                 </Link>
@@ -162,11 +158,11 @@ function Filter() {
     React.useEffect(() => {
         // Debounce of user input
         const timer = setTimeout(() => {
-                navigate({
-                    to: pathname,
-                    search: { filter: filterDraft },
-                    replace: true,
-                });
+            navigate({
+                to: pathname,
+                search: { filter: filterDraft },
+                replace: true,
+            });
         }, 800);
         return () => clearTimeout(timer);
     }, [filterDraft]);

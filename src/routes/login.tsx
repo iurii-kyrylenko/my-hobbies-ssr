@@ -2,9 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { FormEvent, useState } from "react";
 import z from "zod";
-import { getCurrentUserFn, loginFn } from "~/utils/auth";
+import { getCurrentUserFn, loginFn } from "~/server/users";
 
-const fallback = "/protected" as const;
+const fallback = "/books" as const;
 
 export const Route = createFileRoute("/login")({
     validateSearch: z.object({
