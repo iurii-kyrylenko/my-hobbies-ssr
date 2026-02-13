@@ -128,6 +128,10 @@ function AppBar() {
                     Home
                 </Link>
                 {" | "}
+                <Link to="/people" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
+                    People
+                </Link>
+                {" | "}
                 <Link to="/books" activeProps={{ className: "font-bold" }}>
                     Books
                 </Link>

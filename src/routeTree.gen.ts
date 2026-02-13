@@ -9,7 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PagingRouteImport } from './routes/paging'
+import { Route as PeopleRouteImport } from './routes/people'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
@@ -17,9 +17,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthMoviesRouteImport } from './routes/_auth/movies'
 import { Route as AuthBooksRouteImport } from './routes/_auth/books'
 
-const PagingRoute = PagingRouteImport.update({
-  id: '/paging',
-  path: '/paging',
+const PeopleRoute = PeopleRouteImport.update({
+  id: '/people',
+  path: '/people',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -56,7 +56,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/paging': typeof PagingRoute
+  '/people': typeof PeopleRoute
   '/books': typeof AuthBooksRoute
   '/movies': typeof AuthMoviesRoute
 }
@@ -64,7 +64,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/paging': typeof PagingRoute
+  '/people': typeof PeopleRoute
   '/books': typeof AuthBooksRoute
   '/movies': typeof AuthMoviesRoute
 }
@@ -74,7 +74,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
-  '/paging': typeof PagingRoute
+  '/people': typeof PeopleRoute
   '/_auth/books': typeof AuthBooksRoute
   '/_auth/movies': typeof AuthMoviesRoute
 }
@@ -84,18 +84,18 @@ export interface FileRouteTypes {
     | '/'
     | '/customScript.js'
     | '/login'
-    | '/paging'
+    | '/people'
     | '/books'
     | '/movies'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customScript.js' | '/login' | '/paging' | '/books' | '/movies'
+  to: '/' | '/customScript.js' | '/login' | '/people' | '/books' | '/movies'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/customScript.js'
     | '/login'
-    | '/paging'
+    | '/people'
     | '/_auth/books'
     | '/_auth/movies'
   fileRoutesById: FileRoutesById
@@ -105,16 +105,16 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
-  PagingRoute: typeof PagingRoute
+  PeopleRoute: typeof PeopleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/paging': {
-      id: '/paging'
-      path: '/paging'
-      fullPath: '/paging'
-      preLoaderRoute: typeof PagingRouteImport
+    '/people': {
+      id: '/people'
+      path: '/people'
+      fullPath: '/people'
+      preLoaderRoute: typeof PeopleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -181,7 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
-  PagingRoute: PagingRoute,
+  PeopleRoute: PeopleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

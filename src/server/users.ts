@@ -23,6 +23,16 @@ interface User {
     shareMovies: boolean;
 }
 
+interface UserInfoDoc {
+    _id: ObjectId;
+    name: string;
+    shareBooks: boolean;
+    shareMovies: boolean;
+    books: number;
+    movies: number;
+    total: number;
+}
+
 export const loginFn = createServerFn({ method: "POST" })
     .inputValidator((data: { name: string; password: string; redirectTo: string }) => data)
     .handler(async ({ data }) => {
@@ -82,6 +92,32 @@ export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(
         return { _id: _id.toString(), ...rest };
     },
 );
+
+export const getPeopleFn = createServerFn({ method: "GET" }).handler(async () => {
+    const db = await connectToDatabase();
+
+    const documents = await db
+        .collection("users")
+        .aggregate()
+        .match({ $or: [{ shareBooks: true }, { shareMovies: true }] })
+        .lookup({ from: "books", localField: "_id", foreignField: "userId", as: "books" })
+        .lookup({ from: "movies", localField: "_id", foreignField: "userId", as: "movies" })
+        .project<UserInfoDoc>({
+            name: 1,
+            shareBooks: 1,
+            shareMovies: 1,
+            books: { $size: "$books" },
+            movies: { $size: "$movies" },
+            total: { $add: [{ $size: "$books" }, { $size: "$movies" }] }
+        })
+        .match({ total: { $gt: 0 } })
+        .sort({ total: -1, name: 1 })
+        .toArray();
+
+    const people = documents.map((doc) => ({  ...doc, _id: doc._id.toString() }));
+
+    return people;
+});
 
 const checkPassword = (password: string, hash: string, salt: string) =>
     crypto.pbkdf2Sync(password, salt, 1000, 64, "sha1").toString("hex") === hash;
