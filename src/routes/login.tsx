@@ -28,11 +28,11 @@ function RouteComponent() {
             e.preventDefault()
             const data = new FormData(e.currentTarget);
 
-            const email = data.get("email")?.toString() ?? "";
+            const name = data.get("name")?.toString() ?? "";
             const password = data.get("password")?.toString() ?? "";
             const redirectTo = search.redirect ?? fallback;
 
-            const result = await loginServerFn({ data: { email, password, redirectTo } });
+            const result = await loginServerFn({ data: { name, password, redirectTo } });
 
             if (result) {
                 setError(result.error);
@@ -53,14 +53,15 @@ function RouteComponent() {
             <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
                 <fieldset className="w-full grid gap-2">
                     <div className="grid gap-2 items-center min-w-[300px]">
-                        <label htmlFor="email" className="text-sm font-medium">
-                            Email
+                        <label htmlFor="name" className="text-sm font-medium">
+                            User name
                         </label>
                         <input
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            type="email"
+                            id="name"
+                            name="name"
+                            placeholder="Enter your name"
+                            type="text"
+                            autoComplete="username"
                             className="border rounded-md p-2 w-full"
                             required
                         />
@@ -74,6 +75,7 @@ function RouteComponent() {
                             name="password"
                             placeholder="Enter your password"
                             type="password"
+                            autoComplete="current-password"
                             className="border rounded-md p-2 w-full"
                             required
                         />

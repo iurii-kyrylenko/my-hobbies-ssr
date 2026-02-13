@@ -5,7 +5,7 @@ import { MoviesPage, getPageMovies, pageSize } from "~/server/movies";
 
 export const moviesQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
-        queryKey: ["movies", filter],
+        queryKey: ["movies", userId, filter],
         queryFn: async ({ pageParam = 1 }): Promise<MoviesPage> => getPageMovies({
             data: {
                 userId,
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_auth/movies")({
     }),
     loader: async ({ context: { queryClient, user }, deps: { filter } }) => {
         // Prefetch the first page on the server
-        await queryClient.prefetchInfiniteQuery(moviesQueryOptions(user._id, filter));
+        await queryClient.prefetchInfiniteQuery(moviesQueryOptions(user?._id, filter));
     },
     component: RouteComponent,
 });
@@ -38,7 +38,7 @@ function RouteComponent() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useInfiniteQuery(moviesQueryOptions(user._id, filter));
+    } = useInfiniteQuery(moviesQueryOptions(user?._id, filter));
 
     return (
         <div>

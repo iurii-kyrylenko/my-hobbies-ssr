@@ -5,7 +5,7 @@ import { BooksPage, getPageBooks, pageSize } from "~/server/books";
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
-        queryKey: ["books", filter],
+        queryKey: ["books", userId, filter],
         queryFn: async ({ pageParam = 1 }): Promise<BooksPage> => getPageBooks({
             data: {
                 userId,
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_auth/books")({
     }),
     loader: async ({ context: { queryClient, user }, deps: { filter } }) => {
         // Prefetch the first page on the server
-        await queryClient.prefetchInfiniteQuery(booksQueryOptions(user._id, filter));
+        await queryClient.prefetchInfiniteQuery(booksQueryOptions(user?._id, filter));
     },
     component: RouteComponent,
 });
@@ -38,7 +38,7 @@ function RouteComponent() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useInfiniteQuery(booksQueryOptions(user._id, filter));
+    } = useInfiniteQuery(booksQueryOptions(user?._id, filter));
 
     return (
         <div>

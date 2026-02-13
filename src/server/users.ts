@@ -24,16 +24,16 @@ interface User {
 }
 
 export const loginFn = createServerFn({ method: "POST" })
-    .inputValidator((data: { email: string; password: string; redirectTo: string }) => data)
+    .inputValidator((data: { name: string; password: string; redirectTo: string }) => data)
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
         const user = await db
             .collection<UserDoc>("users")
-            .findOne({ email: data.email });
+            .findOne({ name: data.name });
 
         if (!user) {
-            return { error: `User ${data.email} is not registered` };
+            return { error: `User ${data.name} is not registered` };
         }
 
         if (!checkPassword(data.password, user.hash, user.salt)) {
