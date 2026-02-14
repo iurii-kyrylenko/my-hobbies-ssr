@@ -122,7 +122,7 @@ function AppBar() {
     const { filter } = Route.useSearch();
 
     return (
-        <>
+        <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
             <div className="p-2 flex gap-2 text-lg items-baseline">
                 <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
                     Home
@@ -148,8 +148,7 @@ function AppBar() {
                     <ChangeTheme />
                 </div>
             </div>
-            <hr />
-        </>
+        </div>
     );
 }
 
