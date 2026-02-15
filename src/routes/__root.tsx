@@ -22,6 +22,7 @@ import appCss from "~/styles/app.css?url";
 import { getCurrentUserFn, logoutFn } from "~/server/users";
 import { seo } from "~/utils/seo";
 import { getThemeServerFn } from "~/server/theme";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // The rootRoute acts as the "source of truth" for the context available to all child routes
 // So we have to use createRootRouteWithContext instead of createRootRoute.
@@ -30,7 +31,7 @@ interface MyRouterContext {
 }
 
 const searchSchema = z.object({
-    filter: z.string().optional().catch(""),
+    filter: z.string().optional().catch(undefined),
 });
 
 type Search = z.infer<typeof searchSchema>;
@@ -112,6 +113,7 @@ function RootComponent() {
                     <Outlet />
                 </ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
+                <ReactQueryDevtools buttonPosition="bottom-left" />
                 <Scripts />
             </body>
         </html>
@@ -163,7 +165,7 @@ function Filter() {
         const timer = setTimeout(() => {
             navigate({
                 to: pathname,
-                search: { filter: filterDraft },
+                search: { filter: filterDraft || undefined },
                 replace: true,
             });
         }, 800);

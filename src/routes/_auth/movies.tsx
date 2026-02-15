@@ -53,7 +53,7 @@ function RouteComponent() {
             ))}
 
             <button
-                className="my-2 p-2 border rounded-md"
+                className="mb-16 p-2 border rounded-md"
                 onClick={() => fetchNextPage()}
                 disabled={!hasNextPage || isFetchingNextPage}
             >
