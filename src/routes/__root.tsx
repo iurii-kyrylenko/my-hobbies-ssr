@@ -157,30 +157,45 @@ function AppBar() {
 function Filter() {
     const navigate = useNavigate({ from: Route.fullPath });
     const { filter } = Route.useSearch();
+    const [isForm, setIsForm] = React.useState(false);
     const [filterDraft, setFilterDraft] = React.useState(filter ?? "");
     const { pathname } = useLocation();
 
-    React.useEffect(() => {
-        // Debounce of user input
-        const timer = setTimeout(() => {
-            navigate({
-                to: pathname,
-                search: { filter: filterDraft || undefined },
-                replace: true,
-            });
-        }, 800);
-        return () => clearTimeout(timer);
-    }, [filterDraft]);
-
     return (
-        <input
-            className="border rounded-md p-2"
-            type="search"
-            placeholder="Filter"
-            value={filterDraft}
-            onChange={(e) => setFilterDraft(e.target.value)}
-        >
-        </input>
+        <>
+            {isForm
+                ?
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    navigate({
+                        to: pathname,
+                        search: (old) => ({ ...old, filter: filterDraft || undefined }),
+                        replace: true,
+                    });
+                    setIsForm(false);
+                }}>
+                    <input
+                        className="border h-12 rounded-md p-2"
+                        autoFocus
+                        type="search"
+                        placeholder="Filter"
+                        value={filterDraft}
+                        onChange={(e) => setFilterDraft(e.target.value)}
+                    >
+                    </input>
+                </form>
+                : (
+                    <button
+                        className="h-12"
+                        onClick={() => setIsForm(true)}
+                    >
+                        <span className="cursor-pointer hover:underline">
+                            Filter
+                        </span>
+                        {": "}{filter}
+                    </button>
+                )}
+        </>
     );
 }
 
