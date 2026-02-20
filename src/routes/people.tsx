@@ -1,5 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
-import { createFileRoute, useLoaderData } from "@tanstack/react-router";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { getPeopleFn } from "~/server/users";
 
 export const peopleQueryOptions = () =>
@@ -16,7 +16,12 @@ export const Route = createFileRoute("/people")({
 })
 
 function RouteComponent() {
-    const data = Route.useLoaderData();
+    // Even though the data is loaded in the loader, we must call useQuery
+    // inside the component. TanStack Query rehydrates the cache on the client and
+    // useQuery hooks into that cached entry. When we call
+    // queryClient.invalidateQueries({ queryKey: [...] }), the useQuery hook
+    // detects the change and triggers a background refetch.
+    const { data } = useQuery(peopleQueryOptions());
     return (
         <pre className="p-2">
             {JSON.stringify(data, null, 2)}

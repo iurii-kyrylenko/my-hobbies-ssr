@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as AuthMoviesRouteImport } from './routes/_auth/movies'
 import { Route as AuthBooksRouteImport } from './routes/_auth/books'
 
@@ -41,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthProfileRoute = AuthProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthMoviesRoute = AuthMoviesRouteImport.update({
   id: '/movies',
   path: '/movies',
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/people': typeof PeopleRoute
   '/books': typeof AuthBooksRoute
   '/movies': typeof AuthMoviesRoute
+  '/profile': typeof AuthProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/people': typeof PeopleRoute
   '/books': typeof AuthBooksRoute
   '/movies': typeof AuthMoviesRoute
+  '/profile': typeof AuthProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/people': typeof PeopleRoute
   '/_auth/books': typeof AuthBooksRoute
   '/_auth/movies': typeof AuthMoviesRoute
+  '/_auth/profile': typeof AuthProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,8 +96,16 @@ export interface FileRouteTypes {
     | '/people'
     | '/books'
     | '/movies'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/customScript.js' | '/login' | '/people' | '/books' | '/movies'
+  to:
+    | '/'
+    | '/customScript.js'
+    | '/login'
+    | '/people'
+    | '/books'
+    | '/movies'
+    | '/profile'
   id:
     | '__root__'
     | '/'
@@ -98,6 +115,7 @@ export interface FileRouteTypes {
     | '/people'
     | '/_auth/books'
     | '/_auth/movies'
+    | '/_auth/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/profile': {
+      id: '/_auth/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthProfileRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/_auth/movies': {
       id: '/_auth/movies'
       path: '/movies'
@@ -165,11 +190,13 @@ declare module '@tanstack/react-router' {
 interface AuthRouteRouteChildren {
   AuthBooksRoute: typeof AuthBooksRoute
   AuthMoviesRoute: typeof AuthMoviesRoute
+  AuthProfileRoute: typeof AuthProfileRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthBooksRoute: AuthBooksRoute,
   AuthMoviesRoute: AuthMoviesRoute,
+  AuthProfileRoute: AuthProfileRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

@@ -93,6 +93,25 @@ export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(
     },
 );
 
+export const updateUser = createServerFn({ method: "POST" })
+    .inputValidator((data: { userId: string, shareBooks: boolean, shareMovies: boolean }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        db.collection<UserDoc>("users")
+            .updateOne(
+                { _id: new ObjectId(data.userId) },
+                {
+                    $set: {
+                        shareBooks: data.shareBooks,
+                        shareMovies: data.shareMovies,
+                    },
+                },
+            );
+
+        throw redirect({ to: "/people" });
+    });
+
 export const getPeopleFn = createServerFn({ method: "GET" }).handler(async () => {
     const db = await connectToDatabase();
 
@@ -114,7 +133,7 @@ export const getPeopleFn = createServerFn({ method: "GET" }).handler(async () =>
         .sort({ total: -1, name: 1 })
         .toArray();
 
-    const people = documents.map((doc) => ({  ...doc, _id: doc._id.toString() }));
+    const people = documents.map((doc) => ({ ...doc, _id: doc._id.toString() }));
 
     return people;
 });

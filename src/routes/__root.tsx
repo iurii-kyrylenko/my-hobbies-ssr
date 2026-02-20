@@ -141,6 +141,10 @@ function AppBar() {
                 <Link to="/movies" activeProps={{ className: "font-bold" }}>
                     Movies
                 </Link>
+                {" | "}
+                <Link to="/profile" activeProps={{ className: "font-bold" }}>
+                    Profile
+                </Link>
                 <div className="inline-block ms-auto">
                     <Filter />
                 </div>
