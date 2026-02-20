@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import z from "zod";
 import { getCurrentUserFn, loginFn } from "~/server/users";
 
-const fallback = "/books" as const;
+const fallback = "/" as const;
 
 export const Route = createFileRoute("/login")({
     validateSearch: z.object({

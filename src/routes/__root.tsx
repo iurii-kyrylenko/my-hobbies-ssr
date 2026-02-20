@@ -121,7 +121,8 @@ function RootComponent() {
 }
 
 function AppBar() {
-    const { filter } = Route.useSearch();
+    const { user } = Route.useRouteContext();
+    // const { filter } = Route.useSearch();
 
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
@@ -133,18 +134,22 @@ function AppBar() {
                 <Link to="/people" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
                     People
                 </Link>
-                {" | "}
-                <Link to="/books" activeProps={{ className: "font-bold" }}>
-                    Books
-                </Link>
-                {" | "}
-                <Link to="/movies" activeProps={{ className: "font-bold" }}>
-                    Movies
-                </Link>
-                {" | "}
-                <Link to="/profile" activeProps={{ className: "font-bold" }}>
-                    Profile
-                </Link>
+                {user && (
+                    <>
+                        {" | "}
+                        <Link to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
+                            Books
+                        </Link>
+                        {" | "}
+                        <Link to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
+                            Movies
+                        </Link>
+                        {" | "}
+                        <Link to="/profile" activeProps={{ className: "font-bold" }}>
+                            Profile
+                        </Link>
+                    </>
+                )}
                 <div className="inline-block ms-auto">
                     <Filter />
                 </div>
@@ -154,7 +159,7 @@ function AppBar() {
                     <ChangeTheme />
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

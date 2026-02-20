@@ -1,5 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import React from "react";
 import { getPeopleFn } from "~/server/users";
 
 export const peopleQueryOptions = () =>
@@ -22,9 +23,25 @@ function RouteComponent() {
     // queryClient.invalidateQueries({ queryKey: [...] }), the useQuery hook
     // detects the change and triggers a background refetch.
     const { data } = useQuery(peopleQueryOptions());
+
     return (
-        <pre className="p-2">
-            {JSON.stringify(data, null, 2)}
-        </pre>
+        <>
+            {data?.map((user) => (
+                <React.Fragment key={user._id}>
+                    <pre>
+                        {JSON.stringify(user, null, 2)}
+                    </pre>
+                    <div className="ml-12">
+                        <Link className="hover:underline" to="/$userId/books" params={{ userId: user._id }}>
+                            Show books
+                        </Link>
+                        {" | "}
+                        <Link className="hover:underline" to="/$userId/movies" params={{ userId: user._id }}>
+                            Show movies
+                        </Link>
+                    </div>
+                </React.Fragment>)
+            )}
+        </>
     );
 }

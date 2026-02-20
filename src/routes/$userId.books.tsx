@@ -1,5 +1,5 @@
 import { infiniteQueryOptions, useInfiniteQuery, } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { BooksPage, getPageBooks, pageSize } from "~/server/books";
 
@@ -19,35 +19,55 @@ export const booksQueryOptions = (userId: string, filter?: string) =>
         staleTime: 1000 * 60,
     });
 
-export const Route = createFileRoute("/_auth/books")({
+export const Route = createFileRoute("/$userId/books")({
     loaderDeps: ({ search }) => ({
         filter: search.filter,
     }),
-    loader: async ({ context: { queryClient, user }, deps: { filter } }) => {
+    loader: async ({ context: { queryClient }, params: { userId }, deps: { filter } }) => {
         // Prefetch the first page on the server
-        await queryClient.prefetchInfiniteQuery(booksQueryOptions(user?._id, filter));
+        await queryClient.prefetchInfiniteQuery(booksQueryOptions(userId, filter));
     },
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { user } = Route.useRouteContext();
+    const { userId } = Route.useParams();
     const { filter } = Route.useSearch();
+    const { user } = Route.useRouteContext();
     const {
         data,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useInfiniteQuery(booksQueryOptions(user?._id, filter));
+    } = useInfiniteQuery(booksQueryOptions(userId, filter));
 
     return (
         <div>
+            <Link
+                className="fixed up-6 right-6 size-16 text-2xl rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center hover:bg-blue-400 transition-colors"
+                to="/books/new"
+            >
+                +
+            </Link>
+
             {data?.pages.map((page, i) => (
                 <React.Fragment key={i}>
                     {page.books.map((book) => (
-                        <pre key={book._id}>
-                            {JSON.stringify(book, null, 2)}
-                        </pre>
+                        <>
+                            <pre key={book._id}>
+                                {JSON.stringify(book, null, 2)}
+                            </pre>
+                            {user?._id === book.userId &&
+                                <div className="ml-12">
+                                    <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
+                                        Update
+                                    </Link>
+                                    {" | "}
+                                    <button className="cursor-pointer hover:underline">
+                                        Delete
+                                    </button>
+                                </div>}
+                        </>
                     ))}
                 </React.Fragment>
             ))}
