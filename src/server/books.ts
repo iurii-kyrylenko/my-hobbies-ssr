@@ -27,6 +27,15 @@ export interface BooksPage {
     page: number;
 }
 
+interface CreateBook {
+    userId: string;
+    title: string;
+    author: string;
+    completed: Date;
+    mode: string;
+    googleBookId: string;
+}
+
 export const pageSize = 4;
 
 export const getPageBooks = createServerFn({ method: 'GET' })
@@ -83,3 +92,21 @@ const filterCondition = (filter?: string) => {
 
     return condition;
 };
+
+export const createBook = createServerFn({ method: "POST" })
+    .inputValidator((data: CreateBook) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        db.collection<Omit<BookDoc, '_id'>>("books")
+            .insertOne({ ...data, userId: new ObjectId(data.userId) });
+    });
+
+export const deleteBook = createServerFn({ method: "POST" })
+    .inputValidator((data: { bookId: string }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        db.collection<BookDoc>("books")
+            .deleteOne({ _id: new ObjectId(data.bookId) });
+    });

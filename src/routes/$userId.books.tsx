@@ -1,7 +1,7 @@
-import { infiniteQueryOptions, useInfiniteQuery, } from "@tanstack/react-query";
+import { infiniteQueryOptions, useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { BooksPage, getPageBooks, pageSize } from "~/server/books";
+import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -33,13 +33,20 @@ export const Route = createFileRoute("/$userId/books")({
 function RouteComponent() {
     const { userId } = Route.useParams();
     const { filter } = Route.useSearch();
-    const { user } = Route.useRouteContext();
+    const { user, queryClient } = Route.useRouteContext();
     const {
         data,
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery(booksQueryOptions(userId, filter));
+
+    const deleteBookMutation = useMutation({
+        mutationFn: deleteBook,
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ["books", user?._id] });
+        },
+    });
 
     return (
         <div>
@@ -63,7 +70,10 @@ function RouteComponent() {
                                         Update
                                     </Link>
                                     {" | "}
-                                    <button className="cursor-pointer hover:underline">
+                                    <button
+                                        className="cursor-pointer hover:underline"
+                                        onClick={() => deleteBookMutation.mutate({ data: { bookId: book._id } })}
+                                    >
                                         Delete
                                     </button>
                                 </div>}

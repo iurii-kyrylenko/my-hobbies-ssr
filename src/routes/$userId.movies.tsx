@@ -1,4 +1,4 @@
-import { infiniteQueryOptions, useInfiniteQuery, } from "@tanstack/react-query";
+import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { MoviesPage, getPageMovies, pageSize } from "~/server/movies";
