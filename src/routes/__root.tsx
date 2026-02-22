@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import {
     HeadContent,
     Link,
@@ -111,6 +111,7 @@ function RootComponent() {
                 <ThemeProvider theme={theme}>
                     <AppBar />
                     <Outlet />
+                    <Footer />
                 </ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
                 <ReactQueryDevtools buttonPosition="bottom-left" />
@@ -160,6 +161,29 @@ function AppBar() {
                 </div>
             </div>
         </div >
+    );
+}
+
+function Footer() {
+    const { data } = useQuery<string>({
+        queryKey: ["message"],
+        queryFn: () => "",
+    });
+
+    const { queryClient } = Route.useRouteContext();
+
+    return (
+        <>
+            {data && <div className="fixed bottom-6 left-20 h-12 px-4 flex items-center bg-red-800">
+                <span
+                    className="mr-2 hover:bg-red-600 cursor-pointer"
+                    onClick={() => queryClient.setQueryData(["message"], () => "")}
+                >
+                    &nbsp;&#x2715;&nbsp;
+                </span>
+                {data}
+            </div>}
+        </>
     );
 }
 

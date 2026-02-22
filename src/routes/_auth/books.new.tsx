@@ -19,6 +19,9 @@ function RouteComponent() {
                 params: { userId: user._id }
             });
         },
+        onError: (error) => {
+            queryClient.setQueryData(["message"], () => error.message);
+        },
     });
 
     const handleUpdate = () => {

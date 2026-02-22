@@ -21,7 +21,7 @@ export const Route = createFileRoute("/login")({
 function RouteComponent() {
     const search = Route.useSearch();
     const loginServerFn = useServerFn(loginFn);
-    const [error, setError] = useState("");
+    const { queryClient } = Route.useRouteContext();
 
     const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
         try {
@@ -35,7 +35,7 @@ function RouteComponent() {
             const result = await loginServerFn({ data: { name, password, redirectTo } });
 
             if (result) {
-                setError(result.error);
+                queryClient.setQueryData(["message"], () => result.error);
             }
         } catch (error) {
             console.error('Error logging in: ', error);
@@ -79,9 +79,6 @@ function RouteComponent() {
                             className="border rounded-md p-2 w-full"
                             required
                         />
-                    </div>
-                    <div className="text-red-500">
-                        {error}
                     </div>
                     <button
                         type="submit"
