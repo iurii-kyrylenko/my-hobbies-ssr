@@ -57,11 +57,11 @@ function RouteComponent() {
                 +
             </Link>
 
-            {data?.pages.map((page, i) => (
-                <React.Fragment key={i}>
+            {data?.pages.map((page) => (
+                <React.Fragment key={page.page}>
                     {page.books.map((book) => (
-                        <>
-                            <pre key={book._id}>
+                        <React.Fragment key={book._id}>
+                            <pre>
                                 {JSON.stringify(book, null, 2)}
                             </pre>
                             {user?._id === book.userId &&
@@ -77,7 +77,7 @@ function RouteComponent() {
                                         Delete
                                     </button>
                                 </div>}
-                        </>
+                        </React.Fragment>
                     ))}
                 </React.Fragment>
             ))}
