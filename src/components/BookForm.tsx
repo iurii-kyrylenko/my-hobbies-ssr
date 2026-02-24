@@ -14,8 +14,9 @@ export type FormDataChangeEvent = {
 };
 
 export function BookForm(
-    { data, onChange, onSubmit }:
+    { header, data, onChange, onSubmit }:
         {
+            header: string,
             data: BookFormData,
             onChange: (e: FormDataChangeEvent) => void,
             onSubmit: () => void,
@@ -28,7 +29,7 @@ export function BookForm(
 
     return (
         <div className="grid place-items-center">
-            <h3 className="text-xl">Update book</h3>
+            <h3 className="text-xl">{header}</h3>
             <form className="mt-4 max-w-lg" onSubmit={handleSubmit}>
                 <fieldset className="w-full grid gap-2">
                     <div className="grid gap-2 items-center min-w-[300px]">

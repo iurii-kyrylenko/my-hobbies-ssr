@@ -1,19 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import React from "react";
+import { BookForm, BookFormData, FormDataChangeEvent } from "~/components/BookForm";
 import { createBook } from "~/server/books";
 
 export const Route = createFileRoute("/_auth/books/new")({
     component: RouteComponent,
-})
+});
 
 function RouteComponent() {
     const { user, queryClient } = Route.useRouteContext();
-    const navigate = useNavigate();
+    const navigate = Route.useNavigate();
+    const router = useRouter();
 
     const mutation = useMutation({
         mutationFn: createBook,
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["books", user._id] });
+            queryClient.removeQueries({ queryKey: ["books", user._id] }); // ???
+            router.invalidate(); // ???
+
             navigate({
                 to: "/$userId/books",
                 params: { userId: user._id }
@@ -24,27 +29,35 @@ function RouteComponent() {
         },
     });
 
-    const handleUpdate = () => {
+    const [formData, setFormData] = React.useState<BookFormData>({
+        author: "",
+        title: "",
+        googleBookId: "",
+        mode: "r",
+        completed: new Date().toISOString().substring(0, 10),
+    });
+
+    const handleChange = (e: FormDataChangeEvent) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSubmit = () => {
         mutation.mutate({
             data: {
                 userId: user._id,
-                title: "The Problem of the Green Capsule (The Black Spectacles) (GF-10)",
-                author: "John Dickson Carr",
-                completed: new Date(new Date().setHours(0, 0, 0, 0)),
-                mode: "r",
-                googleBookId: "DOka0AEACAAJ",
-            }
+                ...formData,
+                completed: new Date(formData.completed),
+            },
         });
     };
 
     return (
-        <div>
-            <button
-                className="hover:underline"
-                onClick={handleUpdate}
-            >
-                Add book
-            </button>
-        </div>
+        <BookForm
+            header={"Add book"}
+            data={formData}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+        />
     );
 }
