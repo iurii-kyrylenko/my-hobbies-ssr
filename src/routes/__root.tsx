@@ -123,7 +123,6 @@ function RootComponent() {
 
 function AppBar() {
     const { user } = Route.useRouteContext();
-    // const { filter } = Route.useSearch();
 
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
@@ -174,7 +173,7 @@ function Footer() {
 
     return (
         <>
-            {data && <div className="fixed bottom-6 left-20 h-12 px-4 flex items-center bg-red-800">
+            {data && <div className="fixed bottom-6 left-20 h-12 px-4 flex items-center text-white bg-red-800">
                 <span
                     className="mr-2 hover:bg-red-600 cursor-pointer"
                     onClick={() => queryClient.setQueryData(["message"], () => "")}

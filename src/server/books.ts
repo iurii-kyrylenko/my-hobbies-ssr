@@ -60,7 +60,7 @@ export const getPageBooks = createServerFn({ method: 'GET' })
             ...book,
             _id: book._id.toString(),
             userId: book.userId.toString(),
-            completed: book.completed.toISOString(),
+            completed: book.completed.toISOString().substring(0, 10),
         }));
 
         return { books, page: data.page };
@@ -92,6 +92,47 @@ const filterCondition = (filter?: string) => {
 
     return condition;
 };
+
+export const getBook = createServerFn({ method: "GET" })
+    .inputValidator((data: { bookId: string, userId: string }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        const document = await db.collection<BookDoc>("books")
+            .findOne({ _id: new ObjectId(data.bookId), userId: new ObjectId(data.userId) });
+
+        if (!document) {
+            throw new Error(`Book '${data.bookId}' not found`);
+        }
+
+        return {
+            author: document.author,
+            title: document.title,
+            googleBookId: document.googleBookId,
+            mode: document.mode,
+            completed: document.completed.toISOString().substring(0, 10),
+        };
+    });
+
+export const updateBook = createServerFn({ method: "POST" })
+    .inputValidator((data: Book) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        await db.collection<BookDoc>("books")
+            .updateOne(
+                { _id: new ObjectId(data._id), userId: new ObjectId(data.userId) },
+                {
+                    $set: {
+                        title: data.title,
+                        author: data.author,
+                        completed: new Date(data.completed),
+                        mode: data.mode,
+                        googleBookId: data.googleBookId,
+                    },
+                }
+            );
+    });
 
 export const createBook = createServerFn({ method: "POST" })
     .inputValidator((data: CreateBook) => data)
