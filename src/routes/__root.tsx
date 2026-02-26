@@ -23,6 +23,7 @@ import { getCurrentUserFn, logoutFn } from "~/server/users";
 import { seo } from "~/utils/seo";
 import { getThemeServerFn } from "~/server/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { MyDrawer } from "~/components/Drawer";
 
 // The rootRoute acts as the "source of truth" for the context available to all child routes
 // So we have to use createRootRouteWithContext instead of createRootRoute.
@@ -127,6 +128,7 @@ function AppBar() {
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
             <div className="p-2 flex gap-2 text-lg items-baseline">
+                <MyDrawer />
                 <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
                     Home
                 </Link>
