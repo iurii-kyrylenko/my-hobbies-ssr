@@ -15,6 +15,7 @@ export const Route = createFileRoute("/login")({
             throw redirect({ to: search.redirect || fallback });
         }
     },
+    loader: () => ({ pageName: "Login" }),
     component: RouteComponent,
 });
 

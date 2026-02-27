@@ -6,8 +6,10 @@ import {
     Outlet,
     Scripts,
     createRootRouteWithContext,
+    isMatch,
     retainSearchParams,
     useLocation,
+    useMatches,
     useNavigate,
     useRouter,
 } from "@tanstack/react-router";
@@ -89,7 +91,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         const user = await getCurrentUserFn();
         return { user };
     },
-    loader: () => getThemeServerFn(),
+    loader: async () => ({ theme: await getThemeServerFn(), pageName: null }),
     validateSearch: searchSchema,
     search: {
         // Retain the filter search param while navigating to any route.
@@ -101,7 +103,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootComponent() {
-    const theme = Route.useLoaderData();
+    const { theme } = Route.useLoaderData();
 
     return (
         <html className={theme} lang="en" suppressHydrationWarning>
@@ -124,34 +126,13 @@ function RootComponent() {
 
 function AppBar() {
     const { user } = Route.useRouteContext();
+    const pageName = usePageName();
 
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
             <div className="p-2 flex gap-2 text-lg items-baseline">
                 <MyDrawer />
-                <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
-                    Home
-                </Link>
-                {" | "}
-                <Link to="/people" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
-                    People
-                </Link>
-                {user && (
-                    <>
-                        {" | "}
-                        <Link to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
-                            Books
-                        </Link>
-                        {" | "}
-                        <Link to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
-                            Movies
-                        </Link>
-                        {" | "}
-                        <Link to="/profile" activeProps={{ className: "font-bold" }}>
-                            Profile
-                        </Link>
-                    </>
-                )}
+                { pageName }
                 <div className="inline-block ms-auto">
                     <Filter />
                 </div>
@@ -163,6 +144,11 @@ function AppBar() {
             </div>
         </div >
     );
+}
+
+function usePageName() {
+    const matches = useMatches();
+    return matches[matches.length - 1].loaderData?.pageName;
 }
 
 function Footer() {

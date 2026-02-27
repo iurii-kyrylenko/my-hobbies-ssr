@@ -5,6 +5,7 @@ import { BookForm, BookFormData, FormDataChangeEvent } from "~/components/BookFo
 import { createBook } from "~/server/books";
 
 export const Route = createFileRoute("/_auth/books/new")({
+    loader: () => ({ pageName: "Add Book" }),
     component: RouteComponent,
 });
 

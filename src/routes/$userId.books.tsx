@@ -23,9 +23,10 @@ export const Route = createFileRoute("/$userId/books")({
     loaderDeps: ({ search }) => ({
         filter: search.filter,
     }),
-    loader: async ({ context: { queryClient }, params: { userId }, deps: { filter } }) => {
+    loader: async ({ context: { queryClient, user }, params: { userId }, deps: { filter } }) => {
         // Prefetch the first page on the server
         await queryClient.prefetchInfiniteQuery(booksQueryOptions(userId, filter));
+        return ({ pageName: user?._id === userId ? "My Books" : "User's Books" });
     },
     component: RouteComponent,
 });
@@ -50,18 +51,17 @@ function RouteComponent() {
 
     return (
         <div>
-            <Link
-                className="fixed up-6 right-6 size-16 text-2xl rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center hover:bg-blue-400 transition-colors"
-                to="/books/new"
-            >
-                +
-            </Link>
+            {user?._id === userId
+                ? <Link
+                    className="fixed up-6 right-6 size-16 text-2xl rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center hover:bg-blue-400 transition-colors"
+                    to="/books/new">+</Link>
+                : null}
 
             {data?.pages.map((page) => (
                 <React.Fragment key={page.page}>
                     {page.books.map((book) => (
                         <React.Fragment key={book._id}>
-                            <pre>
+                            <pre className="whitespace-pre-wrap">
                                 {JSON.stringify(book, null, 2)}
                             </pre>
                             {user?._id === book.userId &&

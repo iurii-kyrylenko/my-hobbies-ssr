@@ -5,6 +5,7 @@ import React, { FormEvent } from 'react';
 import { updateUser } from '~/server/users';
 
 export const Route = createFileRoute('/_auth/profile')({
+    loader: () => ({ pageName: "Profile" }),
     component: RouteComponent,
 });
 

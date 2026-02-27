@@ -12,7 +12,7 @@ export const peopleQueryOptions = () =>
 
 export const Route = createFileRoute("/people")({
     loader: ({ context: { queryClient } }) =>
-        queryClient.ensureQueryData(peopleQueryOptions()),
+        ({ data: queryClient.ensureQueryData(peopleQueryOptions()), pageName: "People" }),
     component: RouteComponent,
 })
 

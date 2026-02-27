@@ -74,21 +74,21 @@ export function MyDrawer() {
                 <h1 className="text-xl">My Hobbies</h1>
 
                 <div className="mt-4 flex flex-col gap-2">
-                    <Link to="/" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
+                    <Link to="/" activeProps={{ className: "font-bold disabled" }} activeOptions={{ exact: true }}>
                         Home
                     </Link>
-                    <Link to="/people" activeProps={{ className: "font-bold" }} activeOptions={{ exact: true }}>
+                    <Link to="/people" activeProps={{ className: "font-bold  disabled" }} activeOptions={{ exact: true }}>
                         People
                     </Link>
                     {user && (
                         <>
-                            <Link to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
+                            <Link to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
                                 Books
                             </Link>
-                            <Link to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold" }}>
+                            <Link to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
                                 Movies
                             </Link>
-                            <Link to="/profile" activeProps={{ className: "font-bold" }}>
+                            <Link to="/profile" activeProps={{ className: "font-bold disabled" }}>
                                 Profile
                             </Link>
                             <Link to="/" onClick={handleLogout}>
