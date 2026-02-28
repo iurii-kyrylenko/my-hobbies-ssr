@@ -66,7 +66,10 @@ export function MyDrawer() {
 
     return (
         <>
-            <button onClick={() => setIsOpen(true)}>
+            <button
+                className="cursor-pointer"
+                onClick={() => setIsOpen(true)}
+            >
                 &nbsp;☰&nbsp;
             </button>
 

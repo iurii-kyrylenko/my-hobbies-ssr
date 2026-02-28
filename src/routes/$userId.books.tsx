@@ -53,7 +53,7 @@ function RouteComponent() {
         <div>
             {user?._id === userId
                 ? <Link
-                    className="fixed up-6 right-6 size-16 text-2xl rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center hover:bg-blue-400 transition-colors"
+                    className="fixed up-6 right-6 size-12 text-2xl rounded-full bg-blue-500 text-white shadow-lg flex items-center justify-center hover:bg-blue-400 transition-colors"
                     to="/books/new">+</Link>
                 : null}
 

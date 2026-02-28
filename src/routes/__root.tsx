@@ -2,19 +2,15 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import {
     HeadContent,
-    Link,
     Outlet,
     Scripts,
     createRootRouteWithContext,
-    isMatch,
     retainSearchParams,
     useLocation,
     useMatches,
     useNavigate,
-    useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useServerFn } from "@tanstack/react-start";
 import React from "react";
 import z from "zod";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
@@ -126,29 +122,30 @@ function RootComponent() {
 
 function AppBar() {
     const { user } = Route.useRouteContext();
-    const pageName = usePageName();
 
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
-            <div className="p-2 flex gap-2 text-lg items-baseline">
-                <MyDrawer />
-                { pageName }
-                <div className="inline-block ms-auto">
+            <div className="py-2 px-3 h-16 flex justify-between items-center items-baseline text-lg">
+                <div className="flex gap-3">
+                    <MyDrawer />
+                    <PageName />
+                </div>
+                <div className="flex-1 mx-4 md:mx-40 lg:mx-60">
                     <Filter />
                 </div>
-                <div className="inline-block ms-auto pe-2">
-                    <AuthControl />
-                    {" | "}
-                    <ChangeTheme />
+                <div className="flex gap-3">
+                    <AuthUser />
+                    <ThemeChanger />
                 </div>
             </div>
         </div >
     );
 }
 
-function usePageName() {
+function PageName() {
     const matches = useMatches();
-    return matches[matches.length - 1].loaderData?.pageName;
+    const pageName = matches[matches.length - 1].loaderData?.pageName;
+    return <>{pageName}</>
 }
 
 function Footer() {
@@ -195,7 +192,7 @@ function Filter() {
                     setIsForm(false);
                 }}>
                     <input
-                        className="border h-12 rounded-md p-2"
+                        className="border h-12 w-full min-w-20 rounded-md p-2"
                         autoFocus
                         type="search"
                         placeholder="Filter"
@@ -209,61 +206,34 @@ function Filter() {
                         className="h-12"
                         onClick={() => setIsForm(true)}
                     >
-                        <span className="cursor-pointer hover:underline">
-                            Filter
+                        <span className="cursor-pointer">
+                            🔎&nbsp;&nbsp;{filter}
                         </span>
-                        {": "}{filter}
                     </button>
                 )}
         </>
     );
 }
 
-function AuthControl() {
-    const router = useRouter();
-    const navigate = Route.useNavigate();
-    const logoutServerFn = useServerFn(logoutFn);
+function AuthUser() {
     const { user } = Route.useRouteContext();
 
-    const handleLogout = async () => {
-        await logoutServerFn();
-        await router.invalidate();
-        navigate({ to: "/" });
-    };
-
     return (
-        <>
-            {!user ? (
-                <Link to="/login" activeProps={{ className: "font-bold" }}>
-                    Login
-                </Link>
-            ) : (
-                <>
-                    <span className="cursor-pointer" title={JSON.stringify(user, null, 2)}>
-                        {user.name}
-                    </span>
-                    {" → "}
-                    <button
-                        onClick={handleLogout}
-                        className="cursor-pointer hover:underline"
-                    >
-                        Logout
-                    </button>
-                </>
-            )}
-        </>
+        <button>
+            👤 {user?.name}
+        </button>
     );
 }
 
-function ChangeTheme() {
+function ThemeChanger() {
     const { theme, setTheme } = useTheme();
 
     return (
         <button
-            className="cursor-pointer hover:underline"
+            className="cursor-pointer"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         >
-            {theme}
+            🌙
         </button>
     );
 }
