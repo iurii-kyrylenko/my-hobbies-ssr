@@ -13,6 +13,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import z from "zod";
+import { FunnelIcon, UserIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import { ThemeProvider, useTheme } from "~/components/theme-provider";
@@ -203,12 +204,12 @@ function Filter() {
                 </form>
                 : (
                     <button
-                        className="h-12"
+                        className="cursor-pointer"
                         onClick={() => setIsForm(true)}
                     >
-                        <span className="cursor-pointer">
-                            🔎&nbsp;&nbsp;{filter}
-                        </span>
+                        <FunnelIcon className="inline block size-6 text-blue-400" />
+                        &nbsp;
+                        {filter}
                     </button>
                 )}
         </>
@@ -220,7 +221,9 @@ function AuthUser() {
 
     return (
         <button>
-            👤 {user?.name}
+            <UserIcon className="inline block size-6 text-blue-400" />
+            &nbsp;
+            {user?.name}
         </button>
     );
 }
@@ -233,7 +236,10 @@ function ThemeChanger() {
             className="cursor-pointer"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
         >
-            🌙
+            {theme === "light"
+                ? <SunIcon className="size-6 text-blue-400" />
+                : <MoonIcon className="size-6 text-blue-400" />
+            }
         </button>
     );
 }
