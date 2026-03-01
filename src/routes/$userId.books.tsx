@@ -59,37 +59,43 @@ function RouteComponent() {
     }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     return (
-        <div>
+        <>
             {user?._id === userId
                 ? <Link
                     className="fixed up-6 right-6 size-12 text-2xl rounded-full bg-blue-400/80 text-white shadow-lg flex items-center justify-center transition-colors"
                     to="/books/new">+</Link>
                 : null}
 
-            {data?.pages.map((page) => (
-                <React.Fragment key={page.page}>
-                    {page.books.map((book) => (
-                        <React.Fragment key={book._id}>
-                            <pre className="whitespace-pre-wrap">
-                                {JSON.stringify(book, null, 2)}
-                            </pre>
-                            {user?._id === book.userId &&
-                                <div className="ml-12">
-                                    <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
-                                        Update
-                                    </Link>
-                                    {" | "}
-                                    <button
-                                        className="cursor-pointer hover:underline"
-                                        onClick={() => deleteBookMutation.mutate({ data: { bookId: book._id } })}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>}
-                        </React.Fragment>
-                    ))}
-                </React.Fragment>
-            ))}
+            <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 m-4 gap-4 items-start">
+
+                {data?.pages.map((page) => (
+                    <React.Fragment key={page.page}>
+                        {page.books.map((book) => (
+                            <div
+                                className="border-2 p-2"
+                                key={book._id}
+                            >
+                                <pre className="whitespace-pre-wrap">
+                                    {JSON.stringify(book, null, 2)}
+                                </pre>
+                                {user?._id === book.userId &&
+                                    <div className="ml-12">
+                                        <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
+                                            Update
+                                        </Link>
+                                        {" | "}
+                                        <button
+                                            className="cursor-pointer hover:underline"
+                                            onClick={() => deleteBookMutation.mutate({ data: { bookId: book._id } })}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>}
+                            </div>
+                        ))}
+                    </React.Fragment>
+                ))}
+            </div>
 
             <button
                 ref={ref}
@@ -104,6 +110,6 @@ function RouteComponent() {
                         : "Nothing more to load"
                 }
             </button>
-        </div>
+        </>
     );
 }
