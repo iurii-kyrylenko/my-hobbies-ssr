@@ -27,7 +27,7 @@ export interface MoviesPage {
     page: number;
 }
 
-export const pageSize = 4;
+export const pageSize = 24;
 
 export const getPageMovies = createServerFn({ method: 'GET' })
     .inputValidator((d: { userId: string, filter?: string, page: number }) => d)

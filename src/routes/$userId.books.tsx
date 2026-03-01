@@ -2,6 +2,7 @@ import { infiniteQueryOptions, useInfiniteQuery, useMutation } from "@tanstack/r
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
+import { useInView } from "react-intersection-observer";
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -32,6 +33,8 @@ export const Route = createFileRoute("/$userId/books")({
 });
 
 function RouteComponent() {
+    const { ref, inView } = useInView();
+
     const { userId } = Route.useParams();
     const { filter } = Route.useSearch();
     const { user, queryClient } = Route.useRouteContext();
@@ -48,6 +51,12 @@ function RouteComponent() {
             queryClient.removeQueries({ queryKey: ["books", user?._id] });
         },
     });
+
+    React.useEffect(() => {
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage()
+        }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     return (
         <div>
@@ -83,6 +92,7 @@ function RouteComponent() {
             ))}
 
             <button
+                ref={ref}
                 className="mb-16 p-2 border rounded-md"
                 onClick={() => fetchNextPage()}
                 disabled={!hasNextPage || isFetchingNextPage}
