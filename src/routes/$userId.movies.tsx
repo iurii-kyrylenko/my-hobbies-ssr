@@ -1,7 +1,7 @@
 import { infiniteQueryOptions, useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
-import { MoviesPage, getPageMovies, pageSize } from "~/server/movies";
+import { MoviesPage, deleteMovie, getPageMovies, pageSize } from "~/server/movies";
 import { useInView } from "react-intersection-observer";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
@@ -48,12 +48,12 @@ function RouteComponent() {
         isFetchingNextPage,
     } = useInfiniteQuery(moviesQueryOptions(userId, filter));
 
-    // const deleteMovieMutation = useMutation({
-    //     mutationFn: deleteMovie,
-    //     onSuccess: () => {
-    //         queryClient.removeQueries({ queryKey: ["movies", user?._id] });
-    //     },
-    // });
+    const deleteMovieMutation = useMutation({
+        mutationFn: deleteMovie,
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ["movies", user?._id] });
+        },
+    });
 
     React.useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
@@ -102,7 +102,7 @@ function RouteComponent() {
                                         {" | "}
                                         <button
                                             className="cursor-pointer hover:underline"
-                                        // onClick={() => deleteMovieMutation.mutate({ data: { movieId: movie._id } })}
+                                            onClick={() => deleteMovieMutation.mutate({ data: { movieId: movie._id } })}
                                         >
                                             Delete
                                         </button>

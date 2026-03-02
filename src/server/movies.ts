@@ -27,6 +27,15 @@ export interface MoviesPage {
     page: number;
 }
 
+interface CreateMovie {
+    userId: string;
+    title: string;
+    year: string;
+    notes: string;
+    completed: Date;
+    imdbId: string;
+}
+
 export const pageSize = 24;
 
 export const getPageMovies = createServerFn({ method: 'GET' })
@@ -84,3 +93,62 @@ const filterCondition = (filter?: string) => {
 
     return condition;
 };
+
+export const getMovie = createServerFn({ method: "GET" })
+    .inputValidator((data: { movieId: string, userId: string }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        const document = await db.collection<MovieDoc>("movies")
+            .findOne({ _id: new ObjectId(data.movieId), userId: new ObjectId(data.userId) });
+
+        if (!document) {
+            throw new Error(`Movie '${data.movieId}' not found`);
+        }
+
+        return {
+            title: document.title,
+            notes: document.notes,
+            imdbId: document.imdbId,
+            year: document.year,
+            completed: document.completed.toISOString().substring(0, 10),
+        };
+    });
+
+export const updateMovie = createServerFn({ method: "POST" })
+    .inputValidator((data: Movie) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        await db.collection<MovieDoc>("movies")
+            .updateOne(
+                { _id: new ObjectId(data._id), userId: new ObjectId(data.userId) },
+                {
+                    $set: {
+                        title: data.title,
+                        notes: data.notes,
+                        completed: new Date(data.completed),
+                        year: data.year,
+                        imdbId: data.imdbId,
+                    },
+                }
+            );
+    });
+
+export const createMovie = createServerFn({ method: "POST" })
+    .inputValidator((data: CreateMovie) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        db.collection<Omit<MovieDoc, '_id'>>("movies")
+            .insertOne({ ...data, userId: new ObjectId(data.userId) });
+    });
+
+export const deleteMovie = createServerFn({ method: "POST" })
+    .inputValidator((data: { movieId: string }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        db.collection<MovieDoc>("movies")
+            .deleteOne({ _id: new ObjectId(data.movieId) });
+    });

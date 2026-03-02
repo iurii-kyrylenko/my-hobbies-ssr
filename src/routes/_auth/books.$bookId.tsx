@@ -5,12 +5,15 @@ import { BookForm, BookFormData, FormDataChangeEvent } from "~/components/BookFo
 import { getBook, updateBook } from "~/server/books";
 
 export const Route = createFileRoute("/_auth/books/$bookId")({
-    loader: async ({ context, params }) => ({ data: await getBook({
-        data: {
-            bookId: params.bookId,
-            userId: context.user._id,
-        },
-    }), pageName: "Update Book" }),
+    loader: async ({ context, params }) => ({
+        data: await getBook({
+            data: {
+                bookId: params.bookId,
+                userId: context.user._id,
+            },
+        }),
+        pageName: "Update Book",
+    }),
     component: RouteComponent,
 });
 
