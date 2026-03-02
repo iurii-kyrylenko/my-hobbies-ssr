@@ -41,7 +41,9 @@ export const getBookInfo = createServerFn({ method: 'GET' })
         const baseURL = process.env.GOOGLE_BOOKS_API;
 
         if (data.googleBookId) {
-            const res = await fetch(`${baseURL}volumes/${data.googleBookId}`);
+            const url = new URL(`${baseURL}volumes/${data.googleBookId}`);
+            url.search = new URLSearchParams({ key: process.env.GOOGLE_API_KEY! }).toString();
+            const res = await fetch(url);
 
             if (!res.ok) {
                 throw new Error(`${res.status}: ${res.statusText}`);
@@ -56,7 +58,10 @@ export const getBookInfo = createServerFn({ method: 'GET' })
         }
 
         const url = new URL(`${baseURL}volumes`);
-        url.search = new URLSearchParams({ q: buildQuery(data.author, data.title) }).toString();
+        url.search = new URLSearchParams({
+            q: buildQuery(data.author, data.title),
+            key: process.env.GOOGLE_API_KEY!,
+        }).toString();
         const res = await fetch(url);
 
         if (!res.ok) {
