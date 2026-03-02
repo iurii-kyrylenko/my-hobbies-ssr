@@ -3,6 +3,9 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
 import { useInView } from "react-intersection-observer";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { BookInfo } from "~/components/BookInfo";
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -78,8 +81,21 @@ function RouteComponent() {
                                 <pre className="whitespace-pre-wrap">
                                     {JSON.stringify(book, null, 2)}
                                 </pre>
+
+                                <Disclosure as="div" className="pt-2">
+                                    <DisclosureButton className="group flex w-full items-center justify-between">
+                                        <span className="text-white group-data-hover:text-white/80">
+                                            Details
+                                        </span>
+                                        <ChevronDownIcon className="size-5 group-data-open:rotate-180" />
+                                    </DisclosureButton>
+                                    <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
+                                        <BookInfo {...book} />
+                                    </DisclosurePanel>
+                                </Disclosure>
+
                                 {user?._id === book.userId &&
-                                    <div className="ml-12">
+                                    <div>
                                         <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
                                             Update
                                         </Link>

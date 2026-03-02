@@ -62,7 +62,6 @@ export function MyDrawer() {
 
     useEffect(() => {
         handleClose();
-        console.log({ isOpen });
     }, [pathname]);
 
     return (
