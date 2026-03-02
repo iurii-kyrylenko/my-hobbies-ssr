@@ -1,7 +1,11 @@
-import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
+import { infiniteQueryOptions, useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { MoviesPage, getPageMovies, pageSize } from "~/server/movies";
+import { useInView } from "react-intersection-observer";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { MovieInfo } from "~/components/MovieInfo";
 
 export const moviesQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -32,9 +36,11 @@ export const Route = createFileRoute("/$userId/movies")({
 });
 
 function RouteComponent() {
+    const { ref, inView } = useInView();
+
     const { userId } = Route.useParams();
     const { filter } = Route.useSearch();
-    const { user } = Route.useRouteContext();
+    const { user, queryClient } = Route.useRouteContext();
     const {
         data,
         fetchNextPage,
@@ -42,37 +48,73 @@ function RouteComponent() {
         isFetchingNextPage,
     } = useInfiniteQuery(moviesQueryOptions(userId, filter));
 
+    // const deleteMovieMutation = useMutation({
+    //     mutationFn: deleteMovie,
+    //     onSuccess: () => {
+    //         queryClient.removeQueries({ queryKey: ["movies", user?._id] });
+    //     },
+    // });
+
+    React.useEffect(() => {
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage()
+        }
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
     return (
-        <div>
+        <>
             {user?._id === userId
                 ? <Link
                     className="fixed up-6 right-6 size-12 text-2xl rounded-full bg-blue-400/80 text-white shadow-lg flex items-center justify-center transition-colors"
                     to="/movies/new">+</Link>
                 : null}
 
-            {data?.pages.map((page) => (
-                <React.Fragment key={page.page}>
-                    {page.movies.map((movie) => (
-                        <React.Fragment key={movie._id}>
-                            <pre className="whitespace-pre-wrap">
-                                {JSON.stringify(movie, null, 2)}
-                            </pre>
-                            {user?._id === movie.userId &&
-                                <div className="ml-12">
-                                    <Link className="hover:underline" to="/movies/$movieId" params={{ movieId: movie._id }}>
-                                        Update
-                                    </Link>
-                                    {" | "}
-                                    <button className="cursor-pointer hover:underline">
-                                        Delete
-                                    </button>
-                                </div>}
-                        </React.Fragment>
-                    ))}
-                </React.Fragment>
-            ))}
+            <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 m-4 gap-4 items-start">
+
+                {data?.pages.map((page) => (
+                    <React.Fragment key={page.page}>
+                        {page.movies.map((movie) => (
+                            <div
+                                className="border-2 p-2"
+                                key={movie._id}
+                            >
+                                <pre className="whitespace-pre-wrap">
+                                    {JSON.stringify(movie, null, 2)}
+                                </pre>
+
+                                <Disclosure as="div" className="pt-2">
+                                    <DisclosureButton className="group flex w-full items-center justify-between hover:cursor-pointer">
+                                        <span>
+                                            Details
+                                        </span>
+                                        <ChevronDownIcon className="size-5 group-data-open:rotate-180" />
+                                    </DisclosureButton>
+                                    <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
+                                        <MovieInfo {...movie} />
+                                    </DisclosurePanel>
+                                </Disclosure>
+
+                                {user?._id === movie.userId &&
+                                    <div>
+                                        <Link className="hover:underline" to="/movies/$movieId" params={{ movieId: movie._id }}>
+                                            Update
+                                        </Link>
+                                        {" | "}
+                                        <button
+                                            className="cursor-pointer hover:underline"
+                                        // onClick={() => deleteMovieMutation.mutate({ data: { movieId: movie._id } })}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>}
+                            </div>
+                        ))}
+                    </React.Fragment>
+                ))}
+            </div>
 
             <button
+                ref={ref}
                 className="mb-16 p-2 border rounded-md"
                 onClick={() => fetchNextPage()}
                 disabled={!hasNextPage || isFetchingNextPage}
@@ -84,6 +126,6 @@ function RouteComponent() {
                         : "Nothing more to load"
                 }
             </button>
-        </div>
+        </>
     );
 }

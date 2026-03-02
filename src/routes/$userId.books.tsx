@@ -83,8 +83,8 @@ function RouteComponent() {
                                 </pre>
 
                                 <Disclosure as="div" className="pt-2">
-                                    <DisclosureButton className="group flex w-full items-center justify-between">
-                                        <span className="text-white group-data-hover:text-white/80">
+                                    <DisclosureButton className="group flex w-full items-center justify-between hover:cursor-pointer">
+                                        <span>
                                             Details
                                         </span>
                                         <ChevronDownIcon className="size-5 group-data-open:rotate-180" />

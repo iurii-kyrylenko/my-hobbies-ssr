@@ -44,7 +44,7 @@ export const getBookInfo = createServerFn({ method: 'GET' })
             const res = await fetch(`${baseURL}volumes/${data.googleBookId}`);
 
             if (!res.ok) {
-                throw new Error("Network response was not ok");
+                throw new Error(`${res.status}: ${res.statusText}`);
             }
 
             const result: GoogleSearchResponse = await res.json();
@@ -60,7 +60,7 @@ export const getBookInfo = createServerFn({ method: 'GET' })
         const res = await fetch(url);
 
         if (!res.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error(`${res.status}: ${res.statusText}`);
         }
 
         const result: GoogleSearchResponse = await res.json();
