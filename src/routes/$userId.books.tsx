@@ -83,7 +83,7 @@ function RouteComponent() {
                                 className="p-2 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50"
                                 key={book._id}
                             >
-                                <div className="m-2 flex flex-col opacity-85">
+                                <div className="m-2 flex flex-col gap-1 opacity-85">
                                     <div className="text-sm font-bold">{book.title}</div>
                                     <div className="text-sm font-medium text-blue-500">by {book.author}</div>
                                     <div className="text-sm">
