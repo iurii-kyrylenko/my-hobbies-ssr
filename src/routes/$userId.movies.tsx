@@ -55,6 +55,12 @@ function RouteComponent() {
         },
     });
 
+    const handleDelete = (movie: { _id: string, title: string }) => {
+        if (confirm(`Do you want to delete movie\n "${movie.title}"?`)) {
+            deleteMovieMutation.mutate({ data: { movieId: movie._id } });
+        }
+    };
+
     React.useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             fetchNextPage()
@@ -103,7 +109,7 @@ function RouteComponent() {
                                         </Link>
                                         <button
                                             className="cursor-pointer hover:underline"
-                                            onClick={() => deleteMovieMutation.mutate({ data: { movieId: movie._id } })}
+                                            onClick={() => handleDelete(movie)}
                                         >
                                             <TrashIcon className="size-5 text-blue-400" />
                                         </button>

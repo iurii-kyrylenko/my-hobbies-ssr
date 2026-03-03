@@ -55,6 +55,12 @@ function RouteComponent() {
         },
     });
 
+    const handleDelete = (book: { _id: string, title: string }) => {
+        if (confirm(`Do you want to delete book\n "${book.title}"?`)) {
+            deleteBookMutation.mutate({ data: { bookId: book._id } });
+        }
+    };
+
     React.useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             fetchNextPage()
@@ -106,7 +112,7 @@ function RouteComponent() {
                                         </Link>
                                         <button
                                             className="cursor-pointer hover:underline"
-                                            onClick={() => deleteBookMutation.mutate({ data: { bookId: book._id } })}
+                                            onClick={() => handleDelete(book)}
                                         >
                                             <TrashIcon className="size-5 text-blue-400" />
                                         </button>
