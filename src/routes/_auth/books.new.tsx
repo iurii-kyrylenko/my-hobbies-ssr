@@ -55,7 +55,6 @@ function RouteComponent() {
 
     return (
         <BookForm
-            header={"Add book"}
             data={formData}
             onChange={handleChange}
             onSubmit={handleSubmit}

@@ -65,12 +65,11 @@ function RouteComponent() {
         <>
             {user?._id === userId
                 ? <Link
-                    className="fixed up-6 right-6 size-12 text-2xl rounded-full bg-blue-400/80 text-white shadow-lg flex items-center justify-center transition-colors"
+                    className="fixed z-10 up-6 right-6 size-12 text-2xl rounded-full bg-blue-400/80 text-white shadow-lg flex items-center justify-center transition-colors"
                     to="/books/new">+</Link>
                 : null}
 
             <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 m-4 gap-4 items-start">
-
                 {data?.pages.map((page) => (
                     <React.Fragment key={page.page}>
                         {page.books.map((book) => (

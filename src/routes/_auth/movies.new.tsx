@@ -55,7 +55,6 @@ function RouteComponent() {
 
     return (
         <MovieForm
-            header={"Add movie"}
             data={formData}
             onChange={handleChange}
             onSubmit={handleSubmit}

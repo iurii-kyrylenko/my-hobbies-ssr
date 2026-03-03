@@ -60,7 +60,7 @@ export const getPageMovies = createServerFn({ method: 'GET' })
             ...movie,
             _id: movie._id.toString(),
             userId: movie.userId.toString(),
-            completed: movie.completed.toISOString(),
+            completed: movie.completed.toISOString().substring(0, 10),
         }));
 
         return { movies, page: data.page };
