@@ -4,6 +4,12 @@ import React from "react";
 import { MoviesPage, deleteMovie, getPageMovies, pageSize } from "~/server/movies";
 import { useInView } from "react-intersection-observer";
 import { MovieCard } from "~/components/MovieCard";
+import ConfirmationDialog from "~/components/ConfirmationDialog";
+
+interface MovieToDelete {
+    _id: string;
+    title: string;
+}
 
 export const moviesQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -53,10 +59,11 @@ function RouteComponent() {
         },
     });
 
-    const handleDelete = (movie: { _id: string, title: string }) => {
-        if (confirm(`Do you want to delete movie\n "${movie.title}"?`)) {
-            deleteMovieMutation.mutate({ data: { movieId: movie._id } });
-        }
+    const [movieToDelete, setMovieToDelete] = React.useState<MovieToDelete | null>(null);
+
+    const handleDelete = () => {
+        movieToDelete && deleteMovieMutation.mutate({ data: { movieId: movieToDelete._id } });
+        setMovieToDelete(null);
     };
 
     React.useEffect(() => {
@@ -81,7 +88,7 @@ function RouteComponent() {
                                 key={movie._id}
                                 movie={movie}
                                 userId={user?._id}
-                                onDeleteMovie={() => handleDelete(movie)}
+                                onDeleteMovie={() => setMovieToDelete(movie)}
                             />
                         )}
                     </React.Fragment>
@@ -101,6 +108,13 @@ function RouteComponent() {
                         : "Nothing more to load"
                 }
             </button>
+
+            <ConfirmationDialog
+                isOpen={!!movieToDelete}
+                onClose={() => setMovieToDelete(null)}
+                onConfirm={handleDelete}
+                message={`Do you want to delete movie "${movieToDelete?.title}"?`}
+            />
         </>
     );
 }

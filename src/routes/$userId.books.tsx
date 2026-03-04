@@ -4,6 +4,12 @@ import React from "react";
 import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
 import { useInView } from "react-intersection-observer";
 import { BookCard } from "~/components/BookCard";
+import ConfirmationDialog from "~/components/ConfirmationDialog";
+
+interface BookToDelete {
+    _id: string;
+    title: string;
+}
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -53,10 +59,11 @@ function RouteComponent() {
         },
     });
 
-    const handleDelete = (book: { _id: string, title: string }) => {
-        if (confirm(`Do you want to delete book\n "${book.title}"?`)) {
-            deleteBookMutation.mutate({ data: { bookId: book._id } });
-        }
+    const [bookToDelete, setBookToDelete] = React.useState<BookToDelete | null>(null);
+
+    const handleDelete = () => {
+        bookToDelete && deleteBookMutation.mutate({ data: { bookId: bookToDelete._id } });
+        setBookToDelete(null);
     };
 
     React.useEffect(() => {
@@ -81,7 +88,7 @@ function RouteComponent() {
                                 key={book._id}
                                 book={book}
                                 userId={user?._id}
-                                onDeleteBook={() => handleDelete(book)}
+                                onDeleteBook={() => setBookToDelete(book)}
                             />
                         )}
                     </React.Fragment>
@@ -101,6 +108,13 @@ function RouteComponent() {
                         : "Nothing more to load"
                 }
             </button>
+
+            <ConfirmationDialog
+                isOpen={!!bookToDelete}
+                onClose={() => setBookToDelete(null)}
+                onConfirm={handleDelete}
+                message={`Do you want to delete book "${bookToDelete?.title}"?`}
+            />
         </>
     );
 }
