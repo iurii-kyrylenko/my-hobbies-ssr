@@ -3,9 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import React from "react";
 import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
 import { useInView } from "react-intersection-observer";
-import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { BookInfo } from "~/components/BookInfo";
+import { BookCard } from "~/components/BookCard";
 
 export const booksQueryOptions = (userId: string, filter?: string) =>
     infiniteQueryOptions({
@@ -78,47 +76,14 @@ function RouteComponent() {
             <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 m-4 gap-4 items-start">
                 {data?.pages.map((page) => (
                     <React.Fragment key={page.page}>
-                        {page.books.map((book) => (
-                            <div
-                                className="p-2 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50"
+                        {page.books.map((book) =>
+                            <BookCard
                                 key={book._id}
-                            >
-                                <div className="m-2 flex flex-col gap-1 opacity-85">
-                                    <div className="text-sm font-bold">{book.title}</div>
-                                    <div className="text-sm font-medium text-blue-500">by {book.author}</div>
-                                    <div className="text-sm">
-                                        {book.mode === "r" ? "REGULAR" : book.mode === "a" ? "AUDIO" : "MIXED"}
-                                        {" | "}
-                                        Read on {book.completed}
-                                    </div>
-                                </div>
-
-                                <Disclosure as="div" className="border rounded-md p-2">
-                                    <DisclosureButton className="group flex w-full items-center justify-between hover:cursor-pointer">
-                                        <span className="text-sm">
-                                            Details...
-                                        </span>
-                                        <ChevronDownIcon className="size-5 text-blue-400 group-data-open:rotate-180" />
-                                    </DisclosureButton>
-                                    <DisclosurePanel className="mt-2 text-sm/5 text-white/50">
-                                        <BookInfo {...book} />
-                                    </DisclosurePanel>
-                                </Disclosure>
-
-                                {user?._id === book.userId &&
-                                    <div className="m-2 mt-4 flex gap-6">
-                                        <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
-                                            <PencilIcon className="size-5 text-blue-400" />
-                                        </Link>
-                                        <button
-                                            className="cursor-pointer hover:underline"
-                                            onClick={() => handleDelete(book)}
-                                        >
-                                            <TrashIcon className="size-5 text-blue-400" />
-                                        </button>
-                                    </div>}
-                            </div>
-                        ))}
+                                book={book}
+                                userId={user?._id}
+                                onDeleteBook={() => handleDelete(book)}
+                            />
+                        )}
                     </React.Fragment>
                 ))}
             </div>

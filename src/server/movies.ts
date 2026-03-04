@@ -12,7 +12,7 @@ interface MovieDoc {
     imdbId: string;
 }
 
-interface Movie {
+export interface Movie {
     _id: string;
     userId: string;
     title: string;
@@ -36,9 +36,9 @@ interface CreateMovie {
     imdbId: string;
 }
 
-export const pageSize = 24;
+export const pageSize = 12;
 
-export const getPageMovies = createServerFn({ method: 'GET' })
+export const getPageMovies = createServerFn({ method: "GET" })
     .inputValidator((d: { userId: string, filter?: string, page: number }) => d)
     .handler(async ({ data }): Promise<MoviesPage> => {
         const skipAmount = (data.page - 1) * pageSize;

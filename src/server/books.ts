@@ -12,7 +12,7 @@ interface BookDoc {
     googleBookId: string;
 }
 
-interface Book {
+export interface Book {
     _id: string;
     userId: string;
     title: string;
@@ -36,9 +36,9 @@ interface CreateBook {
     googleBookId: string;
 }
 
-export const pageSize = 24;
+export const pageSize = 12;
 
-export const getPageBooks = createServerFn({ method: 'GET' })
+export const getPageBooks = createServerFn({ method: "GET" })
     .inputValidator((d: { userId: string, filter?: string, page: number }) => d)
     .handler(async ({ data }): Promise<BooksPage> => {
         const skipAmount = (data.page - 1) * pageSize;
