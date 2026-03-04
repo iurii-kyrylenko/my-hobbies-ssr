@@ -47,9 +47,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
                 content: "width=device-width, initial-scale=1",
             },
             ...seo({
-                title:
-                    "TanStack Start | Type-Safe, Client-First, Full-Stack React Framework",
-                description: `TanStack Start is a type-safe, client-first, full-stack React framework. `,
+                title: "Keep track of your hobbies",
+                description: "Web application to keep track of books you've read and movies you've watched. Based on TanStack React framework.",
             }),
         ],
         links: [

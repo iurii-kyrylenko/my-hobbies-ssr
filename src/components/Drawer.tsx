@@ -36,7 +36,7 @@ export function Drawer(
                     leaveTo="-translate-x-full"
                 >
                     <div className="fixed inset-0">
-                        <DialogPanel className="w-2/3 sm:w-1/2 h-screen bg-white dark:bg-black p-4">
+                        <DialogPanel className="w-2/3 sm:w-1/2 h-screen bg-white dark:bg-black">
                             {children}
                         </DialogPanel>
                     </div>
@@ -71,32 +71,37 @@ export function MyDrawer() {
             </button>
 
             <Drawer isOpen={isOpen} onClose={handleClose}>
-                <h1 className="text-xl">My Hobbies</h1>
+                <h1 className="p-4 text-2xl">MY HOBBIES</h1>
 
-                <div className="mt-4 flex flex-col gap-2">
-                    <Link className="flex gap-2" to="/" activeProps={{ className: "font-bold disabled" }} activeOptions={{ exact: true }}>
+                <div className="flex flex-col gap-6">
+                    <hr className="w-full" />
+
+                    <Link className="ps-4 flex gap-2" to="/" activeProps={{ className: "font-bold disabled" }} activeOptions={{ exact: true }}>
                         <HomeIcon className="size-6 text-blue-400" />
                         Home
                     </Link>
-                    <Link className="flex gap-2" to="/people" activeProps={{ className: "font-bold  disabled" }} activeOptions={{ exact: true }}>
+                    <Link className="ps-4 flex gap-2" to="/people" activeProps={{ className: "font-bold  disabled" }} activeOptions={{ exact: true }}>
                         <UsersIcon className="size-6 text-blue-400" />
                         People
                     </Link>
+
+                    <hr className="w-full" />
+
                     {user && (
                         <>
-                            <Link className="flex gap-2" to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
+                            <Link className="ps-4 flex gap-2" to="/$userId/books" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
                                 <BookOpenIcon className="size-6 text-blue-400" />
                                 Books
                             </Link>
-                            <Link className="flex gap-2" to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
+                            <Link className="ps-4 flex gap-2" to="/$userId/movies" params={{ userId: user._id }} activeProps={{ className: "font-bold disabled" }}>
                                 <FilmIcon className="size-6 text-blue-400" />
                                 Movies
                             </Link>
-                            <Link className="flex gap-2" to="/profile" activeProps={{ className: "font-bold disabled" }}>
+                            <Link className="ps-4 flex gap-2" to="/profile" activeProps={{ className: "font-bold disabled" }}>
                                 <Cog6ToothIcon className="size-6 text-blue-400" />
                                 Profile
                             </Link>
-                            <Link className="flex gap-2" to="/" onClick={handleLogout}>
+                            <Link className="ps-4 flex gap-2" to="/" onClick={handleLogout}>
                                 <ArrowRightStartOnRectangleIcon className="size-6 text-blue-400" />
                                 Logout
                             </Link>
@@ -104,14 +109,14 @@ export function MyDrawer() {
                     )}
                     {!user && (
                         <>
-                            <Link className="flex gap-2" to="/login" activeProps={{ className: "font-bold" }}>
+                            <Link className="ps-4 flex gap-2" to="/login" activeProps={{ className: "font-bold" }}>
                                 <ArrowRightEndOnRectangleIcon className="size-6 text-blue-400" />
                                 Login
                             </Link>
-                            <Link className="flex gap-2" to="/" activeProps={{ className: "font-bold" }}>
+                            {/* <Link className="ps-4 flex gap-2" to="/" activeProps={{ className: "font-bold" }}>
                                 <UserPlusIcon className="size-6 text-blue-400" />
                                 Register
-                            </Link>
+                            </Link> */}
                         </>
                     )}
                 </div>

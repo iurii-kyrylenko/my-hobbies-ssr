@@ -32,8 +32,8 @@ function RouteComponent() {
     return (
         <div className="p-2 grid gap-2 place-items-center">
             <form className="mt-4 max-w-lg" onSubmit={handleUpdate}>
-                <fieldset className="w-full grid gap-2">
-                    <div className="grid gap-2 items-center min-w-[300px]">
+                <fieldset className="w-full grid gap-6">
+                    <div className="grid gap-2 items-center justify-items-start min-w-[300px]">
                         <label htmlFor="books" className="text-sm font-medium">
                             Share books
                         </label>
@@ -45,7 +45,7 @@ function RouteComponent() {
                             onChange={(e) => setShareBooks(e.target.checked)}
                         />
                     </div>
-                    <div className="grid gap-2 items-center min-w-[300px]">
+                    <div className="grid gap-2 items-center justify-items-start min-w-[300px]">
                         <label htmlFor="movies" className="text-sm font-medium">
                             Share movies
                         </label>
@@ -59,7 +59,7 @@ function RouteComponent() {
                     </div>
                     <button
                         type="submit"
-                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
+                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
                     >
                         Update
                     </button>

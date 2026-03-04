@@ -29,7 +29,7 @@ export function MovieForm(
     return (
         <div className="grid place-items-center">
             <form className="mt-4 max-w-lg" onSubmit={handleSubmit}>
-                <fieldset className="w-full grid gap-2">
+                <fieldset className="w-full grid gap-6">
                     <div className="grid gap-2 items-center min-w-[300px]">
                         <label htmlFor="title" className="text-sm font-medium">
                             Movie title

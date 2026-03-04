@@ -52,7 +52,7 @@ function RouteComponent() {
                 <p>Login to see the protected content.</p>
             )}
             <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
-                <fieldset className="w-full grid gap-2">
+                <fieldset className="w-full grid gap-6">
                     <div className="grid gap-2 items-center min-w-[300px]">
                         <label htmlFor="name" className="text-sm font-medium">
                             User name
@@ -83,7 +83,7 @@ function RouteComponent() {
                     </div>
                     <button
                         type="submit"
-                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
+                        className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
                     >
                         Login
                     </button>
