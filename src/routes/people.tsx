@@ -1,6 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import React from "react";
+import { BookOpenIcon, FilmIcon } from "@heroicons/react/24/outline";
 import { getPeopleFn } from "~/server/users";
 
 export const peopleQueryOptions = () =>
@@ -25,23 +25,25 @@ function RouteComponent() {
     const { data } = useQuery(peopleQueryOptions());
 
     return (
-        <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 m-4 gap-4 items-start">
             {data?.map((user) => (
-                <React.Fragment key={user._id}>
-                    <pre>
-                        {JSON.stringify(user, null, 2)}
-                    </pre>
-                    <div className="ml-12">
-                        <Link className="hover:underline" to="/$userId/books" params={{ userId: user._id }}>
-                            Show books
-                        </Link>
-                        {" | "}
-                        <Link className="hover:underline" to="/$userId/movies" params={{ userId: user._id }}>
-                            Show movies
-                        </Link>
+                <div
+                    className="p-3 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50 flex flex-col gap-4"
+                    key={user._id}
+                >
+                    <span className="text-xl">{user.name}</span>
+                    <div className="ms-2 flex gap-4">
+                        {!!user.books && <Link className="flex gap-2 hover:underline" to="/$userId/books" params={{ userId: user._id }}>
+                            <BookOpenIcon className="size-6 text-blue-400" />
+                            <div className="opacity-80">BOOKS: {user.books}</div>
+                        </Link>}
+                        {!!user.movies && <Link className="flex gap-2 hover:underline" to="/$userId/movies" params={{ userId: user._id }}>
+                            <FilmIcon className="size-6 text-blue-400" />
+                            <div className="opacity-80">MOVIES: {user.movies}</div>
+                        </Link>}
                     </div>
-                </React.Fragment>)
+                </div>)
             )}
-        </>
+        </div>
     );
 }
