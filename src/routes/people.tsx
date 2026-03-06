@@ -33,11 +33,11 @@ function RouteComponent() {
                 >
                     <span className="text-xl">{user.name}</span>
                     <div className="ms-2 flex gap-4">
-                        {!!user.books && <Link className="flex gap-2 hover:underline" to="/$userId/books" params={{ userId: user._id }}>
+                        {!!user.books && user.shareBooks && <Link className="flex gap-2 hover:underline" to="/$userId/books" params={{ userId: user._id }}>
                             <BookOpenIcon className="size-6 text-blue-400" />
                             <div className="opacity-80">BOOKS: {user.books}</div>
                         </Link>}
-                        {!!user.movies && <Link className="flex gap-2 hover:underline" to="/$userId/movies" params={{ userId: user._id }}>
+                        {!!user.movies && user.shareMovies && <Link className="flex gap-2 hover:underline" to="/$userId/movies" params={{ userId: user._id }}>
                             <FilmIcon className="size-6 text-blue-400" />
                             <div className="opacity-80">MOVIES: {user.movies}</div>
                         </Link>}
