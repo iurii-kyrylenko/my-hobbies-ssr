@@ -1,5 +1,6 @@
 import { getBookInfo } from "~/server/bookInfo";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { Severity, useNotification } from "./notifications";
 
 export function BookInfo({
     author,
@@ -17,10 +18,10 @@ export function BookInfo({
         retry: false,
     });
 
-    const queryClient = useQueryClient();
+    const notify = useNotification();
 
     if (isError) {
-        queryClient.setQueryData(["message"], () => error.message);
+        notify({ message: error.message, severity: Severity.ERR });
     }
 
     return (

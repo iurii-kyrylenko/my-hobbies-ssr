@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import React from "react";
 import { BookForm, BookFormData, FormDataChangeEvent } from "~/components/BookForm";
+import { Severity, useNotification } from "~/components/notifications";
 import { getBook, updateBook } from "~/server/books";
 
 export const Route = createFileRoute("/_auth/books/$bookId")({
@@ -24,6 +25,7 @@ function RouteComponent() {
     const router = useRouter();
 
     const { data } = Route.useLoaderData();
+    const notify = useNotification();
 
     const mutation = useMutation({
         mutationFn: updateBook,
@@ -35,9 +37,11 @@ function RouteComponent() {
                 to: "/$userId/books",
                 params: { userId: user._id }
             });
+
+            notify({ message: "A book was modified", severity: Severity.MSG });
         },
         onError: (error) => {
-            queryClient.setQueryData(["message"], () => error.message);
+            notify({ message: error.message, severity: Severity.ERR });
         },
     });
 

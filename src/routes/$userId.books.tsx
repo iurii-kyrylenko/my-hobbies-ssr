@@ -5,6 +5,7 @@ import { BooksPage, deleteBook, getPageBooks, pageSize } from "~/server/books";
 import { useInView } from "react-intersection-observer";
 import { BookCard } from "~/components/BookCard";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
+import { Severity, useNotification } from "~/components/notifications";
 
 interface BookToDelete {
     _id: string;
@@ -52,10 +53,13 @@ function RouteComponent() {
         isFetchingNextPage,
     } = useInfiniteQuery(booksQueryOptions(userId, filter));
 
+    const notify = useNotification();
+
     const deleteBookMutation = useMutation({
         mutationFn: deleteBook,
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ["books", user?._id] });
+            notify({ message: "A book was deleted", severity: Severity.MSG });
         },
     });
 

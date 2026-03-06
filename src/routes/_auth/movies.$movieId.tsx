@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import React from "react";
 import { MovieForm, MovieFormData, FormDataChangeEvent } from "~/components/MovieForm";
+import { Severity, useNotification } from "~/components/notifications";
 import { getMovie, updateMovie } from "~/server/movies";
 
 export const Route = createFileRoute("/_auth/movies/$movieId")({
@@ -24,6 +25,7 @@ function RouteComponent() {
     const router = useRouter();
 
     const { data } = Route.useLoaderData();
+    const notify = useNotification();
 
     const mutation = useMutation({
         mutationFn: updateMovie,
@@ -35,9 +37,11 @@ function RouteComponent() {
                 to: "/$userId/movies",
                 params: { userId: user._id }
             });
+
+            notify({ message: "A movie was modified", severity: Severity.MSG });
         },
         onError: (error) => {
-            queryClient.setQueryData(["message"], () => error.message);
+            notify({ message: error.message, severity: Severity.ERR });
         },
     });
 

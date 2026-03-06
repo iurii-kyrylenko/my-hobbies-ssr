@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start';
 import React, { FormEvent } from 'react';
+import { Severity, useNotification } from '~/components/notifications';
 import { updateUser } from '~/server/users';
 
 export const Route = createFileRoute('/_auth/profile')({
@@ -16,11 +17,13 @@ function RouteComponent() {
     const [shareMovies, setShareMovies] = React.useState(user.shareMovies);
 
     const mutationFn = useServerFn(updateUser);
+    const notify = useNotification();
 
     const mutation = useMutation({
         mutationFn,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["people"] });
+            notify({ message: "Yout profile was updated", severity: Severity.MSG });
         },
     });
 

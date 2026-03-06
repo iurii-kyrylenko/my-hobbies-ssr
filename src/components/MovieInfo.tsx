@@ -1,5 +1,6 @@
 import { getMovieInfo } from "~/server/movieInfo";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Severity, useNotification } from "./notifications";
 
 export function MovieInfo({ imdbId }: { imdbId: string }) {
     const { data, isError, error } = useQuery({
@@ -9,10 +10,10 @@ export function MovieInfo({ imdbId }: { imdbId: string }) {
         retry: false,
     });
 
-    const queryClient = useQueryClient();
+    const notify = useNotification();
 
     if (isError) {
-        queryClient.setQueryData(["message"], () => error.message);
+        notify({ message: error.message, severity: Severity.ERR });
     }
 
     return (

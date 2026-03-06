@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { FormEvent, useState } from "react";
 import z from "zod";
+import { Severity, useNotification } from "~/components/notifications";
 import { getCurrentUserFn, loginFn } from "~/server/users";
 
 const fallback = "/" as const;
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/login")({
 function RouteComponent() {
     const search = Route.useSearch();
     const loginServerFn = useServerFn(loginFn);
-    const { queryClient } = Route.useRouteContext();
+    const notify = useNotification();
 
     const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
         try {
@@ -36,7 +37,7 @@ function RouteComponent() {
             const result = await loginServerFn({ data: { name, password, redirectTo } });
 
             if (result) {
-                queryClient.setQueryData(["message"], () => result.error);
+                notify({ message: result.error, severity: Severity.ERR });
             }
         } catch (error) {
             console.error('Error logging in: ', error);

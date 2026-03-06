@@ -5,6 +5,7 @@ import { MoviesPage, deleteMovie, getPageMovies, pageSize } from "~/server/movie
 import { useInView } from "react-intersection-observer";
 import { MovieCard } from "~/components/MovieCard";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
+import { Severity, useNotification } from "~/components/notifications";
 
 interface MovieToDelete {
     _id: string;
@@ -52,10 +53,13 @@ function RouteComponent() {
         isFetchingNextPage,
     } = useInfiniteQuery(moviesQueryOptions(userId, filter));
 
+    const notify = useNotification();
+
     const deleteMovieMutation = useMutation({
         mutationFn: deleteMovie,
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ["movies", user?._id] });
+            notify({ message: "A movie was deleted", severity: Severity.MSG });
         },
     });
 

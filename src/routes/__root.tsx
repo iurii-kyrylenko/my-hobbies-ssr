@@ -23,6 +23,7 @@ import { seo } from "~/utils/seo";
 import { getThemeServerFn } from "~/server/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { MyDrawer } from "~/components/Drawer";
+import { NotificationSink } from "~/components/notifications";
 
 // The rootRoute acts as the "source of truth" for the context available to all child routes
 // So we have to use createRootRouteWithContext instead of createRootRoute.
@@ -110,7 +111,7 @@ function RootComponent() {
                 <ThemeProvider theme={theme}>
                     <AppBar />
                     <Outlet />
-                    <Footer />
+                    <NotificationSink />
                 </ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
                 <ReactQueryDevtools buttonPosition="bottom-left" />
@@ -146,29 +147,6 @@ function PageName() {
     const matches = useMatches();
     const pageName = matches[matches.length - 1].loaderData?.pageName;
     return <>{pageName}</>
-}
-
-function Footer() {
-    const { data } = useQuery<string>({
-        queryKey: ["message"],
-        queryFn: () => "",
-    });
-
-    const { queryClient } = Route.useRouteContext();
-
-    return (
-        <>
-            {data && <div className="fixed bottom-6 left-20 h-12 px-4 flex items-center text-white bg-red-800">
-                <span
-                    className="mr-2 hover:bg-red-600 cursor-pointer"
-                    onClick={() => queryClient.setQueryData(["message"], () => "")}
-                >
-                    &nbsp;&#x2715;&nbsp;
-                </span>
-                {data}
-            </div>}
-        </>
-    );
 }
 
 function Filter() {
