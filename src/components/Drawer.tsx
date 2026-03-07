@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import { Bars3Icon, HomeIcon, UsersIcon, UserPlusIcon, BookOpenIcon, FilmIcon, Cog6ToothIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import { logoutFn } from "~/server/users";
+import { Severity, useNotification } from "./notifications";
 
 export function Drawer(
     { isOpen, onClose, children }: {
@@ -52,12 +53,14 @@ export function MyDrawer() {
     const logoutServerFn = useServerFn(logoutFn);
     const { user } = useRouteContext({ strict: false });
     const { pathname } = useLocation();
+    const notify = useNotification();
 
     const handleClose = () => setIsOpen(false);
 
     const handleLogout = async () => {
         await logoutServerFn();
         await router.invalidate();
+        notify({ message: "You were logged out", severity: Severity.MSG });
     };
 
     useEffect(() => {

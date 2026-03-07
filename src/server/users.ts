@@ -43,11 +43,11 @@ export const loginFn = createServerFn({ method: "POST" })
             .findOne({ name: data.name });
 
         if (!user) {
-            return { error: `User ${data.name} is not registered` };
+            throw new Error(`User ${data.name} is not registered`);
         }
 
         if (!checkPassword(data.password, user.hash, user.salt)) {
-            return { error: "Password does not match" };
+            throw new Error("Password does not match");
         }
 
         // Create session
@@ -94,19 +94,21 @@ export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(
 );
 
 export const updateUser = createServerFn({ method: "POST" })
-    .inputValidator((data: { userId: string, shareBooks: boolean, shareMovies: boolean }) => data)
+    .inputValidator((data: { userId: string, shareBooks: boolean, shareMovies: boolean, password?: string }) => data)
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
+
+        const hashData = data.password ? hashPassword(data.password) : {};
+        const update = {
+            shareBooks: data.shareBooks,
+            shareMovies: data.shareMovies,
+            ...hashData,
+        };
 
         db.collection<UserDoc>("users")
             .updateOne(
                 { _id: new ObjectId(data.userId) },
-                {
-                    $set: {
-                        shareBooks: data.shareBooks,
-                        shareMovies: data.shareMovies,
-                    },
-                },
+                { $set: update },
             );
 
         throw redirect({ to: "/people" });

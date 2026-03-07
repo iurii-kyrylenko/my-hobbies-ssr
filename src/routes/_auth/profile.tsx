@@ -15,6 +15,8 @@ function RouteComponent() {
 
     const [shareBooks, setShareBooks] = React.useState(user.shareBooks);
     const [shareMovies, setShareMovies] = React.useState(user.shareMovies);
+    const [password, setPassword] = React.useState("");
+    const [confirmation, setConfirmation] = React.useState("");
 
     const mutationFn = useServerFn(updateUser);
     const notify = useNotification();
@@ -29,12 +31,30 @@ function RouteComponent() {
 
     const handleUpdate = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        mutation.mutate({ data: { userId: user._id, shareBooks, shareMovies } });
+
+        const message =
+            password && password.length < 8 ? "Password too short!" :
+                password !== confirmation ? "Password and confirmation differ!" :
+                    null;
+
+        if (message) {
+            notify({ message, severity: Severity.ERR });
+            return;
+        }
+
+        mutation.mutate({
+            data: {
+                userId: user._id,
+                shareBooks,
+                shareMovies,
+                ...(password ? { password } : {}),
+            }
+        });
     };
 
     return (
         <div className="p-2 grid gap-2 place-items-center">
-            <form className="mt-4 max-w-lg" onSubmit={handleUpdate}>
+            <form autoComplete="off" className="mt-4 max-w-lg" onSubmit={handleUpdate}>
                 <fieldset className="w-full grid gap-6">
                     <div className="grid gap-2 items-center justify-items-start min-w-[300px]">
                         <label htmlFor="books" className="text-sm font-medium">
@@ -58,6 +78,34 @@ function RouteComponent() {
                             type="checkbox"
                             checked={shareMovies}
                             onChange={(e) => setShareMovies(e.target.checked)}
+                        />
+                    </div>
+                    <div className="grid gap-2 items-center min-w-[300px]">
+                        <label htmlFor="password" className="text-sm font-medium">
+                            New password
+                        </label>
+                        <input
+                            id="password"
+                            name="password"
+                            placeholder="Enter new password"
+                            type="password"
+                            className="border rounded-md p-2 w-full"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className="grid gap-2 items-center min-w-[300px]">
+                        <label htmlFor="confirmation" className="text-sm font-medium">
+                            Confirmation
+                        </label>
+                        <input
+                            id="confirmation"
+                            name="confirmation"
+                            placeholder="Enter confirmation"
+                            type="password"
+                            className="border rounded-md p-2 w-full"
+                            value={confirmation}
+                            onChange={(e) => setConfirmation(e.target.value)}
                         />
                     </div>
                     <button

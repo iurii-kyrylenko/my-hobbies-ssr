@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { FormEvent, useState } from "react";
@@ -22,26 +23,28 @@ export const Route = createFileRoute("/login")({
 
 function RouteComponent() {
     const search = Route.useSearch();
-    const loginServerFn = useServerFn(loginFn);
+    const mutationFn = useServerFn(loginFn);
     const notify = useNotification();
 
-    const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        try {
-            e.preventDefault()
-            const data = new FormData(e.currentTarget);
+    const mutation = useMutation({
+        mutationFn,
+        onSuccess: () => {
+            notify({ message: "You were logged in", severity: Severity.MSG });
+        },
+        onError: (error) => {
+            notify({ message: error.message, severity: Severity.ERR });
+        },
+    });
 
-            const name = data.get("name")?.toString() ?? "";
-            const password = data.get("password")?.toString() ?? "";
-            const redirectTo = search.redirect ?? fallback;
+    const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const data = new FormData(e.currentTarget);
 
-            const result = await loginServerFn({ data: { name, password, redirectTo } });
+        const name = data.get("name")?.toString() ?? "";
+        const password = data.get("password")?.toString() ?? "";
+        const redirectTo = search.redirect ?? fallback;
 
-            if (result) {
-                notify({ message: result.error, severity: Severity.ERR });
-            }
-        } catch (error) {
-            console.error('Error logging in: ', error);
-        }
+        mutation.mutate({ data: { name, password, redirectTo } });
     };
 
     return (
