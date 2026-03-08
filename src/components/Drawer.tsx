@@ -116,10 +116,10 @@ export function MyDrawer() {
                                 <ArrowRightEndOnRectangleIcon className="size-6 text-blue-400" />
                                 Login
                             </Link>
-                            {/* <Link className="ps-4 flex gap-2" to="/" activeProps={{ className: "font-bold" }}>
+                            <Link className="ps-4 flex gap-2" to="/register" activeProps={{ className: "font-bold" }}>
                                 <UserPlusIcon className="size-6 text-blue-400" />
                                 Register
-                            </Link> */}
+                            </Link>
                         </>
                     )}
                 </div>

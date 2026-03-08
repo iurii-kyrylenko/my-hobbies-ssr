@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PeopleRouteImport } from './routes/people'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CustomScriptDotjsRouteImport } from './routes/customScript[.]js'
@@ -22,6 +23,11 @@ import { Route as AuthMoviesMovieIdRouteImport } from './routes/_auth/movies.$mo
 import { Route as AuthBooksNewRouteImport } from './routes/_auth/books.new'
 import { Route as AuthBooksBookIdRouteImport } from './routes/_auth/books.$bookId'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PeopleRoute = PeopleRouteImport.update({
   id: '/people',
   path: '/people',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/people': typeof PeopleRoute
+  '/register': typeof RegisterRoute
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/profile': typeof AuthProfileRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/people': typeof PeopleRoute
+  '/register': typeof RegisterRoute
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/profile': typeof AuthProfileRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/customScript.js': typeof CustomScriptDotjsRoute
   '/login': typeof LoginRoute
   '/people': typeof PeopleRoute
+  '/register': typeof RegisterRoute
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/_auth/profile': typeof AuthProfileRoute
@@ -130,6 +139,7 @@ export interface FileRouteTypes {
     | '/customScript.js'
     | '/login'
     | '/people'
+    | '/register'
     | '/$userId/books'
     | '/$userId/movies'
     | '/profile'
@@ -143,6 +153,7 @@ export interface FileRouteTypes {
     | '/customScript.js'
     | '/login'
     | '/people'
+    | '/register'
     | '/$userId/books'
     | '/$userId/movies'
     | '/profile'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/customScript.js'
     | '/login'
     | '/people'
+    | '/register'
     | '/$userId/books'
     | '/$userId/movies'
     | '/_auth/profile'
@@ -172,12 +184,20 @@ export interface RootRouteChildren {
   CustomScriptDotjsRoute: typeof CustomScriptDotjsRoute
   LoginRoute: typeof LoginRoute
   PeopleRoute: typeof PeopleRoute
+  RegisterRoute: typeof RegisterRoute
   UserIdBooksRoute: typeof UserIdBooksRoute
   UserIdMoviesRoute: typeof UserIdMoviesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/people': {
       id: '/people'
       path: '/people'
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomScriptDotjsRoute: CustomScriptDotjsRoute,
   LoginRoute: LoginRoute,
   PeopleRoute: PeopleRoute,
+  RegisterRoute: RegisterRoute,
   UserIdBooksRoute: UserIdBooksRoute,
   UserIdMoviesRoute: UserIdMoviesRoute,
 }

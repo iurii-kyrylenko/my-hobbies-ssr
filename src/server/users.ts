@@ -33,6 +33,49 @@ interface UserInfoDoc {
     total: number;
 }
 
+export const registerFn = createServerFn({ method: "POST" })
+    .inputValidator((data: { name: string; email: string; password: string }) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        let user = await db
+            .collection<UserDoc>("users")
+            .findOne({ name: data.name });
+
+        if (user) {
+            throw new Error(`User "${data.name}" already registered!`);
+        }
+
+        user = await db
+            .collection<UserDoc>("users")
+            .findOne({ email: data.email });
+
+        if (user) {
+            throw new Error(`Email "${data.email}" already registered!`);
+        }
+
+        const hashData = hashPassword(data.password);
+
+        const { insertedId } = await db.collection<Omit<UserDoc, '_id'>>("users")
+            .insertOne({
+                name: data.name,
+                email: data.email,
+                shareBooks: false,
+                shareMovies: false,
+                ...hashData,
+            });
+
+        // Create session
+        const session = await useAppSession();
+        await session.update({
+            sub: insertedId.toString(),
+            email: data.email,
+            name: data.name,
+        });
+
+        throw redirect({ to: "/" });
+    });
+
 export const loginFn = createServerFn({ method: "POST" })
     .inputValidator((data: { name: string; password: string; redirectTo: string }) => data)
     .handler(async ({ data }) => {
