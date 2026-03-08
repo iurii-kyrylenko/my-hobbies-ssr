@@ -34,8 +34,33 @@ interface UserInfoDoc {
 }
 
 export const registerFn = createServerFn({ method: "POST" })
-    .inputValidator((data: { name: string; email: string; password: string }) => data)
+    .inputValidator((data: { name: string; email: string; password: string, token: string }) => data)
     .handler(async ({ data }) => {
+        // Verify reCaptcha token
+        const response = await fetch(`${process.env.RECAPTCHA_API}siteverify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `secret=${process.env.RECAPTCHA_SECRET}&response=${data.token}`,
+        });
+
+        const verification = await response.json();
+
+        if (!verification.success) {
+            // Token was invalid, expired, or secret key was wrong
+            throw new Error("Invalid token");
+        }
+
+        if (verification.score < 0.5) {
+            // Likely a bot, even though success was true
+            throw new Error("Bot detected");
+        }
+
+        if (verification.action !== "register") {
+            // Prevents using a token from a different part of the site
+            throw new Error("Action mismatch");
+        }
+
+        // Add user to mongoDb users collection
         const db = await connectToDatabase();
 
         let user = await db

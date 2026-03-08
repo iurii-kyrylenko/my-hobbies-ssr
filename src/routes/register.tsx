@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Severity, useNotification } from "~/components/notifications";
 import { getCurrentUserFn, registerFn } from "~/server/users";
 ;
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/register')({
 function RouteComponent() {
     const mutationFn = useServerFn(registerFn);
     const notify = useNotification();
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     const mutation = useMutation({
         mutationFn,
@@ -27,8 +29,13 @@ function RouteComponent() {
         },
     });
 
-    const onFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+
+        if (!executeRecaptcha) {
+            notify({ message: "Execute recaptcha not yet available", severity: Severity.ERR });
+            return;
+        }
 
         const data = new FormData(e.currentTarget);
         const name = data.get("name")?.toString() ?? "";
@@ -48,11 +55,13 @@ function RouteComponent() {
             return;
         }
 
-        mutation.mutate({ data: { name, email, password } });
+        const token = await executeRecaptcha("register");
+
+        mutation.mutate({ data: { name, email, password, token } });
     };
 
     return (
-        <div className="p-2 grid gap-2 place-items-center">
+        <div id="register-page" className="p-2 grid gap-2 place-items-center">
             <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
                 <fieldset className="w-full grid gap-6">
                     <div className="grid gap-2 items-center min-w-[300px]">

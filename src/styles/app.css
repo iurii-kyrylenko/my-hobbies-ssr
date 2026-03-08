@@ -31,4 +31,8 @@
     .using-mouse * {
         outline: none !important;
     }
+
+    .grecaptcha-badge {
+        visibility: hidden !important;
+    }
 }

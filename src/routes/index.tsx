@@ -33,7 +33,7 @@ function Home() {
 
             <div>Unathorized people can see the data shared by another users.</div>
 
-            <hr className="border-2 border-gray-300 dark:border-gray-700" />
+            <hr className="border-1 border-gray-300 dark:border-gray-700" />
 
             <div>
                 The latest version is a full-stack web application based on the TanStack Start framework
@@ -43,7 +43,7 @@ function Home() {
                 <a href="https://github.com/iurii-kyrylenko/my-hobbies-ssr" target="_blank">&nbsp;&#x1F517;</a>.
             </div>
 
-            <hr className="border-2 border-gray-300 dark:border-gray-700" />
+            <hr className="border-1 border-gray-300 dark:border-gray-700" />
 
             <div>
                 <div>The project has a long history:</div>
@@ -65,7 +65,7 @@ function Home() {
 
             <div>All versions share the same MongoDB database.</div>
 
-            <hr className="border-2 border-gray-300 dark:border-gray-700" />
+            <hr className="border-1 border-gray-300 dark:border-gray-700" />
 
             <div>
                 Change log:
@@ -102,6 +102,13 @@ function Home() {
                     </li>
                 </ul>
             </div>
+
+            <hr className="border-1 border-gray-300 dark:border-gray-700" />
+
+            <small>This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+            </small>
         </div>
     );
 }
