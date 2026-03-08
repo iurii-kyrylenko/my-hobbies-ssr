@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Severity, useNotification } from "~/components/notifications";
 import { getCurrentUserFn, registerFn } from "~/server/users";
 ;
@@ -11,8 +11,17 @@ export const Route = createFileRoute('/register')({
             throw redirect({ to: "/" });
         }
     },
-    loader: () => ({ pageName: "Register" }), component: RouteComponent,
-})
+    loader: () => ({ pageName: "Register" }),
+    component: RouteComponentWithGoogleReCaptchaProvider,
+});
+
+function RouteComponentWithGoogleReCaptchaProvider() {
+    return (
+        <GoogleReCaptchaProvider reCaptchaKey="6LdKF4MsAAAAAFzCax58eXM-J3aSAoNjf_1u_Rti">
+            <RouteComponent />
+        </GoogleReCaptchaProvider>
+    );
+}
 
 function RouteComponent() {
     const mutationFn = useServerFn(registerFn);

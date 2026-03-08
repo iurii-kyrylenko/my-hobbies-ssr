@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import {
     HeadContent,
     Outlet,
@@ -13,7 +13,6 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import React from "react";
 import z from "zod";
-import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 import { FunnelIcon, UserIcon, SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
@@ -110,11 +109,9 @@ function RootComponent() {
             </head>
             <body>
                 <ThemeProvider theme={theme}>
-                    <GoogleReCaptchaProvider reCaptchaKey="6LdKF4MsAAAAAFzCax58eXM-J3aSAoNjf_1u_Rti">
-                        <AppBar />
-                        <Outlet />
-                        <NotificationSink />
-                    </GoogleReCaptchaProvider>
+                    <AppBar />
+                    <Outlet />
+                    <NotificationSink />
                 </ThemeProvider>
                 <TanStackRouterDevtools position="bottom-right" />
                 <ReactQueryDevtools buttonPosition="bottom-left" />

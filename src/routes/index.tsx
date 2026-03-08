@@ -102,13 +102,6 @@ function Home() {
                     </li>
                 </ul>
             </div>
-
-            <hr className="border-1 border-gray-300 dark:border-gray-700" />
-
-            <small>This site is protected by reCAPTCHA and the Google
-                <a href="https://policies.google.com/privacy">Privacy Policy</a> and
-                <a href="https://policies.google.com/terms">Terms of Service</a> apply.
-            </small>
         </div>
     );
 }
