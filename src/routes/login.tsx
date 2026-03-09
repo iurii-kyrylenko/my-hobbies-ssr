@@ -49,7 +49,6 @@ function RouteComponent() {
 
     return (
         <div className="p-2 grid gap-2 place-items-center">
-            <h3 className="text-xl">Login page</h3>
             {search.redirect ? (
                 <p className="text-red-500">You need to login to access this page.</p>
             ) : (

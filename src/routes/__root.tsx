@@ -88,7 +88,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         const user = await getCurrentUserFn();
         return { user };
     },
-    loader: async () => ({ theme: await getThemeServerFn(), pageName: null }),
+    loader: async () => ({ theme: await getThemeServerFn() }),
     validateSearch: searchSchema,
     search: {
         // Retain the filter search param while navigating to any route.
@@ -122,17 +122,23 @@ function RootComponent() {
 }
 
 function AppBar() {
-    const { user } = Route.useRouteContext();
+    interface PageInfo {
+        pageName?: string;
+        isFilter?: boolean;
+    }
+
+    const matches = useMatches();
+    const { pageName, isFilter } = matches[matches.length - 1].loaderData as PageInfo ?? {};
 
     return (
         <div className="sticky mb-2 top-0 z-10 bg-white dark:bg-black shadow-md dark:shadow-gray-500/50">
             <div className="py-2 px-3 h-16 flex justify-between items-center items-baseline text-lg">
                 <div className="flex gap-3">
                     <MyDrawer />
-                    <PageName />
+                    {pageName}
                 </div>
                 <div className="flex-1 mx-4 md:mx-40 lg:mx-60">
-                    <Filter />
+                    {isFilter && <Filter />}
                 </div>
                 <div className="flex gap-3">
                     <AuthUser />
@@ -141,12 +147,6 @@ function AppBar() {
             </div>
         </div >
     );
-}
-
-function PageName() {
-    const matches = useMatches();
-    const pageName = matches[matches.length - 1].loaderData?.pageName;
-    return <>{pageName}</>
 }
 
 function Filter() {
@@ -176,6 +176,8 @@ function Filter() {
                         placeholder="Filter"
                         value={filterDraft}
                         onChange={(e) => setFilterDraft(e.target.value)}
+                        onFocus={() => setFilterDraft(filter ?? "")}
+                        onBlur={() => setIsForm(false)}
                     >
                     </input>
                 </form>
@@ -198,7 +200,7 @@ function AuthUser() {
 
     return (
         <button>
-            <UserIcon className="inline block size-6 text-blue-400" />
+            <UserIcon className="inline block size-6" />
             &nbsp;
             {user?.name}
         </button>

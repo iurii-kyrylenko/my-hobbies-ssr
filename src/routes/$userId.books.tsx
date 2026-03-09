@@ -35,7 +35,7 @@ export const Route = createFileRoute("/$userId/books")({
     loader: async ({ context: { queryClient, user }, params: { userId }, deps: { filter } }) => {
         // Prefetch the first page on the server
         await queryClient.prefetchInfiniteQuery(booksQueryOptions(userId, filter));
-        return ({ pageName: user?._id === userId ? "My Books" : "User's Books" });
+        return ({ pageName: user?._id === userId ? "My Books" : "User's Books", isFilter: true });
     },
     component: RouteComponent,
 });
