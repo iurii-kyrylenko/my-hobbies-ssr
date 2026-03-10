@@ -19,8 +19,7 @@ function RouteComponent() {
     const mutation = useMutation({
         mutationFn: createMovie,
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["movies", user._id] }); // ???
-            router.invalidate(); // ???
+            queryClient.invalidateQueries({ queryKey: ["movies", user._id] });
 
             navigate({
                 to: "/$userId/movies",

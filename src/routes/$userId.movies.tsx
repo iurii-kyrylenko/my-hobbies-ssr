@@ -58,8 +58,11 @@ function RouteComponent() {
     const deleteMovieMutation = useMutation({
         mutationFn: deleteMovie,
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ["movies", user?._id] });
+            queryClient.invalidateQueries({ queryKey: ["movies", user?._id] });
             notify({ message: "A movie was deleted", severity: Severity.MSG });
+        },
+        onError: (error) => {
+            notify({ message: error.message, severity: Severity.ERR });
         },
     });
 
