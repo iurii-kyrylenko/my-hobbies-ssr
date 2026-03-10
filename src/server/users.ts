@@ -133,7 +133,6 @@ export const loginFn = createServerFn({ method: "POST" })
 export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
     const session = await useAppSession();
     await session.clear();
-    throw redirect({ to: "/" });
 });
 
 export const getCurrentUserFn = createServerFn({ method: 'GET' }).handler(

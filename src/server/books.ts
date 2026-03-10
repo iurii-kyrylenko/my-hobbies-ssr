@@ -139,7 +139,7 @@ export const createBook = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        db.collection<Omit<BookDoc, '_id'>>("books")
+        await db.collection<Omit<BookDoc, '_id'>>("books")
             .insertOne({ ...data, userId: new ObjectId(data.userId) });
     });
 
@@ -148,6 +148,6 @@ export const deleteBook = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        db.collection<BookDoc>("books")
+        await db.collection<BookDoc>("books")
             .deleteOne({ _id: new ObjectId(data.bookId) });
     });

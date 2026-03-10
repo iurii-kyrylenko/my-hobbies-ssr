@@ -140,7 +140,7 @@ export const createMovie = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        db.collection<Omit<MovieDoc, '_id'>>("movies")
+        await db.collection<Omit<MovieDoc, '_id'>>("movies")
             .insertOne({ ...data, userId: new ObjectId(data.userId) });
     });
 
@@ -149,6 +149,6 @@ export const deleteMovie = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        db.collection<MovieDoc>("movies")
+        await db.collection<MovieDoc>("movies")
             .deleteOne({ _id: new ObjectId(data.movieId) });
     });
