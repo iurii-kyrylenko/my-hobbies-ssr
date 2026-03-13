@@ -172,7 +172,7 @@ export const updateUser = createServerFn({ method: "POST" })
             ...hashData,
         };
 
-        db.collection<UserDoc>("users")
+        await db.collection<UserDoc>("users")
             .updateOne(
                 { _id: new ObjectId(data.userId) },
                 { $set: update },
