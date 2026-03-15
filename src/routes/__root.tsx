@@ -18,7 +18,7 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { NotFound } from "~/components/NotFound";
 import { ThemeProvider, useTheme } from "~/components/theme-provider";
 import appCss from "~/styles/app.css?url";
-import { getCurrentUserFn, logoutFn } from "~/server/users";
+import { getCurrentUserFn } from "~/server/users";
 import { seo } from "~/utils/seo";
 import { getThemeServerFn } from "~/server/theme";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";

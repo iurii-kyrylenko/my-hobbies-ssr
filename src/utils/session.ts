@@ -1,9 +1,9 @@
 import { useSession } from "@tanstack/react-start/server";
 
-type SessionData = {
-    sub?: string
-    email?: string
-    name?: string
+interface SessionData {
+    sub: string;
+    email: string;
+    name: string;
 }
 
 export function useAppSession() {
