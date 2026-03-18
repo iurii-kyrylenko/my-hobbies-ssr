@@ -51,7 +51,7 @@ export const getPageMovies = createServerFn({ method: "GET" })
                 userId: new ObjectId(data.userId),
                 ...filterCondition(data.filter),
             })
-            .sort({ completed: -1 })
+            .sort({ completed: -1, _id: -1 })
             .skip(skipAmount)
             .limit(pageSize)
             .toArray();
