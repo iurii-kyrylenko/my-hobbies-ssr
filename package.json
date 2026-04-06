@@ -23,6 +23,7 @@
         "react-dom": "^19.0.0",
         "react-google-recaptcha-v3": "^1.11.0",
         "react-intersection-observer": "^10.0.3",
+        "svg-pan-zoom": "^3.6.2",
         "tailwind-merge": "^2.6.0",
         "zod": "^3.24.2"
     },

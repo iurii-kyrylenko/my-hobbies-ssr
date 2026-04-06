@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as UserIdMoviesRouteImport } from './routes/$userId.movies'
 import { Route as UserIdBooksRouteImport } from './routes/$userId.books'
+import { Route as GraphTypeIdRouteImport } from './routes/graph.$type.$id'
 import { Route as AuthMoviesNewRouteImport } from './routes/_auth/movies.new'
 import { Route as AuthMoviesMovieIdRouteImport } from './routes/_auth/movies.$movieId'
 import { Route as AuthBooksNewRouteImport } from './routes/_auth/books.new'
@@ -67,6 +68,11 @@ const UserIdBooksRoute = UserIdBooksRouteImport.update({
   path: '/$userId/books',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphTypeIdRoute = GraphTypeIdRouteImport.update({
+  id: '/graph/$type/$id',
+  path: '/graph/$type/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthMoviesNewRoute = AuthMoviesNewRouteImport.update({
   id: '/movies/new',
   path: '/movies/new',
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/books/new': typeof AuthBooksNewRoute
   '/movies/$movieId': typeof AuthMoviesMovieIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
+  '/graph/$type/$id': typeof GraphTypeIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/books/new': typeof AuthBooksNewRoute
   '/movies/$movieId': typeof AuthMoviesMovieIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
+  '/graph/$type/$id': typeof GraphTypeIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/_auth/books/new': typeof AuthBooksNewRoute
   '/_auth/movies/$movieId': typeof AuthMoviesMovieIdRoute
   '/_auth/movies/new': typeof AuthMoviesNewRoute
+  '/graph/$type/$id': typeof GraphTypeIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/books/new'
     | '/movies/$movieId'
     | '/movies/new'
+    | '/graph/$type/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/books/new'
     | '/movies/$movieId'
     | '/movies/new'
+    | '/graph/$type/$id'
   id:
     | '__root__'
     | '/'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/_auth/books/new'
     | '/_auth/movies/$movieId'
     | '/_auth/movies/new'
+    | '/graph/$type/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   UserIdBooksRoute: typeof UserIdBooksRoute
   UserIdMoviesRoute: typeof UserIdMoviesRoute
+  GraphTypeIdRoute: typeof GraphTypeIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -254,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserIdBooksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graph/$type/$id': {
+      id: '/graph/$type/$id'
+      path: '/graph/$type/$id'
+      fullPath: '/graph/$type/$id'
+      preLoaderRoute: typeof GraphTypeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/movies/new': {
       id: '/_auth/movies/new'
       path: '/movies/new'
@@ -314,6 +334,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   UserIdBooksRoute: UserIdBooksRoute,
   UserIdMoviesRoute: UserIdMoviesRoute,
+  GraphTypeIdRoute: GraphTypeIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

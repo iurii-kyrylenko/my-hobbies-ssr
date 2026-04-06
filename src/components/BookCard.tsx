@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PencilIcon, TrashIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { Book } from "~/server/books";
 import { BookInfo } from "./BookInfo";
 import { Link } from "@tanstack/react-router";
@@ -33,18 +33,27 @@ export function BookCard({ book, userId, onDeleteBook }: {
                 </DisclosurePanel>
             </Disclosure>
 
-            {userId === book.userId &&
-                <div className="m-2 mt-4 flex gap-6">
-                    <Link className="hover:underline" to="/books/$bookId" params={{ bookId: book._id }}>
-                        <PencilIcon className="size-5 text-blue-400" />
-                    </Link>
-                    <button
-                        className="cursor-pointer hover:underline"
-                        onClick={onDeleteBook}
-                    >
-                        <TrashIcon className="size-5 text-blue-400" />
-                    </button>
-                </div>}
+            <div className="m-2 mt-4 flex gap-6">
+                {userId === book.userId &&
+                    <>
+                        <Link to="/books/$bookId" params={{ bookId: book._id }}>
+                            <PencilIcon className="size-5 text-blue-400" />
+                        </Link>
+                        <button
+                            className="cursor-pointer"
+                            onClick={onDeleteBook}
+                        >
+                            <TrashIcon className="size-5 text-blue-400" />
+                        </button>
+                    </>}
+                <Link
+                    className={userId === book.userId ? "ml-auto" : ""}
+                    to="/graph/$type/$id"
+                    params={{ type: "book", id: book._id }}
+                >
+                    <RectangleGroupIcon className="size-5 text-blue-400" />
+                </Link>
+            </div>
         </div>
     );
 }
