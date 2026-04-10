@@ -10,6 +10,7 @@ interface BookDoc {
     completed: Date;
     mode: string;
     googleBookId: string;
+    storyline: string;
 }
 
 export interface Book {
@@ -20,6 +21,7 @@ export interface Book {
     completed: string;
     mode: string;
     googleBookId: string;
+    storyline: string;
 }
 
 export interface BooksPage {
@@ -34,6 +36,7 @@ interface CreateBook {
     completed: Date;
     mode: string;
     googleBookId: string;
+    storyline: string;
 }
 
 export const pageSize = 12;
@@ -111,6 +114,7 @@ export const getBook = createServerFn({ method: "GET" })
             googleBookId: document.googleBookId,
             mode: document.mode,
             completed: document.completed.toISOString().substring(0, 10),
+            storyline: document.storyline ?? "",
         };
     });
 
@@ -129,6 +133,7 @@ export const updateBook = createServerFn({ method: "POST" })
                         completed: new Date(data.completed),
                         mode: data.mode,
                         googleBookId: data.googleBookId,
+                        storyline: data.storyline,
                     },
                 }
             );

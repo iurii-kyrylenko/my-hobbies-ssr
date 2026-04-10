@@ -29,8 +29,11 @@ function RouteComponent() {
 
     const mutation = useMutation({
         mutationFn: updateBook,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["books", user._id] });
+        onSuccess: async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["books", user._id] }),
+                queryClient.invalidateQueries({ queryKey: ["graph", "book", bookId] }),
+            ]);
 
             navigate({
                 to: "/$userId/books",

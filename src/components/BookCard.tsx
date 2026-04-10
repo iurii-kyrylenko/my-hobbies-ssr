@@ -46,13 +46,13 @@ export function BookCard({ book, userId, onDeleteBook }: {
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
                     </>}
-                <Link
+                {book.storyline && <Link
                     className={userId === book.userId ? "ml-auto" : ""}
                     to="/graph/$type/$id"
                     params={{ type: "book", id: book._id }}
                 >
                     <RectangleGroupIcon className="size-5 text-blue-400" />
-                </Link>
+                </Link>}
             </div>
         </div>
     );
