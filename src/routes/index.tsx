@@ -71,6 +71,9 @@ function Home() {
                 Change log:
                 <ul className="list-disc pl-8">
                     <li>
+                        Apr 10, 2026: Add feature Storyline Graph (render svg generated from graphviz-dot string).
+                    </li>
+                    <li>
                         Mar 4, 2026: Deploy the full-stack application on <a href="https://vercel.com/" target="_blank">Vercel</a>.
                     </li>
                     <li>
