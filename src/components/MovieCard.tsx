@@ -43,13 +43,13 @@ export function MovieCard({ movie, userId, onDeleteMovie }: {
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
                     </>}
-                <Link
+                {movie.storyline && <Link
                     className={userId === movie.userId ? "ml-auto" : ""}
                     to="/graph/$type/$id"
                     params={{ type: "movie", id: movie._id }}
                 >
                     <RectangleGroupIcon className="size-5 text-blue-400" />
-                </Link>
+                </Link>}
             </div>
 
         </div>

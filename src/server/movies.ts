@@ -10,6 +10,7 @@ interface MovieDoc {
     notes: string;
     completed: Date;
     imdbId: string;
+    storyline: string;
 }
 
 export interface Movie {
@@ -20,6 +21,7 @@ export interface Movie {
     notes: string;
     completed: string;
     imdbId: string;
+    storyline: string;
 }
 
 export interface MoviesPage {
@@ -34,6 +36,7 @@ interface CreateMovie {
     notes: string;
     completed: Date;
     imdbId: string;
+    storyline: string;
 }
 
 export const pageSize = 12;
@@ -112,6 +115,7 @@ export const getMovie = createServerFn({ method: "GET" })
             imdbId: document.imdbId,
             year: document.year,
             completed: document.completed.toISOString().substring(0, 10),
+            storyline: document.storyline ?? "",
         };
     });
 
@@ -130,6 +134,7 @@ export const updateMovie = createServerFn({ method: "POST" })
                         completed: new Date(data.completed),
                         year: data.year,
                         imdbId: data.imdbId,
+                        storyline: data.storyline,
                     },
                 }
             );
