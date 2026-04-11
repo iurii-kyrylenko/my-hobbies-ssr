@@ -31,9 +31,10 @@ function RouteComponent() {
         mutationFn: updateBook,
         onSuccess: async () => {
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["books", user._id] }),
+                queryClient.invalidateQueries({ queryKey: ["books", user._id], refetchType: "all" }),
                 queryClient.invalidateQueries({ queryKey: ["graph", "book", bookId] }),
             ]);
+            router.invalidate();
 
             navigate({
                 to: "/$userId/books",
