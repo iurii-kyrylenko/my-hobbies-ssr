@@ -18,10 +18,10 @@ function RouteComponent() {
 
     const mutation = useMutation({
         mutationFn: createBook,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["books", user._id] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["books", user._id] });
 
-            navigate({
+            await navigate({
                 to: "/$userId/books",
                 params: { userId: user._id }
             });

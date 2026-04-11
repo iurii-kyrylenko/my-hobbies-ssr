@@ -18,10 +18,10 @@ function RouteComponent() {
 
     const mutation = useMutation({
         mutationFn: createMovie,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["movies", user._id] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["movies", user._id] });
 
-            navigate({
+            await navigate({
                 to: "/$userId/movies",
                 params: { userId: user._id }
             });

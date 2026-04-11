@@ -31,12 +31,13 @@ function RouteComponent() {
         mutationFn: updateMovie,
         onSuccess: async () => {
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["movies", user._id], refetchType: "all" }),
+                queryClient.invalidateQueries({ queryKey: ["movies", user._id], refetchType: "inactive" }),
                 queryClient.invalidateQueries({ queryKey: ["graph", "movie", movieId] }),
             ]);
-            router.invalidate();
 
-            navigate({
+            await router.invalidate();
+
+            await navigate({
                 to: "/$userId/movies",
                 params: { userId: user._id }
             });

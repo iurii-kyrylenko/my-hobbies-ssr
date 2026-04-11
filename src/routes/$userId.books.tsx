@@ -57,8 +57,8 @@ function RouteComponent() {
 
     const deleteBookMutation = useMutation({
         mutationFn: deleteBook,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["books", user?._id] });
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["books", user?._id] });
             notify({ message: "A book was deleted", severity: Severity.MSG });
         },
         onError: (error) => {
