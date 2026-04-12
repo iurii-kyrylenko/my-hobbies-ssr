@@ -37,8 +37,8 @@ export function MovieForm(
         <>
             <div className="grid place-items-center">
                 <form className="mt-4 max-w-lg" onSubmit={handleSubmit}>
-                    <fieldset className="w-full grid gap-6">
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                    <fieldset className="w-full grid gap-4">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="title" className="text-sm font-medium">
                                 Movie title
                             </label>
@@ -53,7 +53,7 @@ export function MovieForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="year" className="text-sm font-medium">
                                 Year
                             </label>
@@ -68,7 +68,7 @@ export function MovieForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="notes" className="text-sm font-medium">
                                 Notes
                             </label>
@@ -83,7 +83,7 @@ export function MovieForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="imdbId" className="text-sm font-medium">
                                 IMDB ID
                             </label>
@@ -97,7 +97,7 @@ export function MovieForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="completed" className="text-sm font-medium">
                                 Completed
                             </label>

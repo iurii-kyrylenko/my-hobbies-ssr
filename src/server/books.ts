@@ -13,7 +13,7 @@ interface BookDoc {
     storyline: string;
 }
 
-export interface Book {
+interface BookBase {
     _id: string;
     userId: string;
     title: string;
@@ -21,11 +21,18 @@ export interface Book {
     completed: string;
     mode: string;
     googleBookId: string;
+}
+
+interface Book extends BookBase {
     storyline: string;
 }
 
+export interface BookReview extends BookBase {
+    hasStoryline: boolean;
+}
+
 export interface BooksPage {
-    books: Book[];
+    books: BookReview[];
     page: number;
 }
 
@@ -59,11 +66,12 @@ export const getPageBooks = createServerFn({ method: "GET" })
             .limit(pageSize)
             .toArray();
 
-        const books = documents.map((book) => ({
+        const books = documents.map(({ storyline, ...book }) => ({
             ...book,
             _id: book._id.toString(),
             userId: book.userId.toString(),
             completed: book.completed.toISOString().substring(0, 10),
+            hasStoryline: !!storyline,
         }));
 
         return { books, page: data.page };

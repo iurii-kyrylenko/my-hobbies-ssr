@@ -1,11 +1,11 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronDownIcon, PencilIcon, RectangleGroupIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Movie } from "~/server/movies";
+import { MovieReview } from "~/server/movies";
 import { MovieInfo } from "./MovieInfo";
 import { Link } from "@tanstack/react-router";
 
 export function MovieCard({ movie, userId, onDeleteMovie }: {
-    movie: Movie,
+    movie: MovieReview,
     userId?: string,
     onDeleteMovie: () => void,
 }) {
@@ -43,7 +43,7 @@ export function MovieCard({ movie, userId, onDeleteMovie }: {
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
                     </>}
-                {movie.storyline && <Link
+                {movie.hasStoryline && <Link
                     className={userId === movie.userId ? "ml-auto" : ""}
                     to="/graph/$type/$id"
                     params={{ type: "movie", id: movie._id }}

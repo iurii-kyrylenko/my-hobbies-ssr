@@ -37,8 +37,8 @@ export function BookForm(
         <>
             <div className="grid place-items-center">
                 <form className="mt-4 max-w-lg" onSubmit={handleSubmit}>
-                    <fieldset className="w-full grid gap-6">
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                    <fieldset className="w-full grid gap-4">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="title" className="text-sm font-medium">
                                 Author
                             </label>
@@ -53,7 +53,7 @@ export function BookForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="title" className="text-sm font-medium">
                                 Book title
                             </label>
@@ -68,7 +68,7 @@ export function BookForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="googleBookId" className="text-sm font-medium">
                                 Google book Id
                             </label>
@@ -82,7 +82,7 @@ export function BookForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="mode" className="text-sm font-medium">
                                 Mode
                             </label>
@@ -98,7 +98,7 @@ export function BookForm(
                                 <option value="r-a">Mixed</option>
                             </select>
                         </div>
-                        <div className="grid gap-2 items-center min-w-[300px]">
+                        <div className="grid gap-1 items-center min-w-[300px]">
                             <label htmlFor="completed" className="text-sm font-medium">
                                 Completed
                             </label>

@@ -13,7 +13,7 @@ interface MovieDoc {
     storyline: string;
 }
 
-export interface Movie {
+interface MovieBase {
     _id: string;
     userId: string;
     title: string;
@@ -21,11 +21,18 @@ export interface Movie {
     notes: string;
     completed: string;
     imdbId: string;
+}
+
+interface Movie extends MovieBase {
     storyline: string;
 }
 
+export interface MovieReview extends MovieBase {
+    hasStoryline: boolean;
+}
+
 export interface MoviesPage {
-    movies: Movie[];
+    movies: MovieReview[];
     page: number;
 }
 
@@ -59,11 +66,12 @@ export const getPageMovies = createServerFn({ method: "GET" })
             .limit(pageSize)
             .toArray();
 
-        const movies = documents.map((movie) => ({
+        const movies = documents.map(({ storyline, ...movie }) => ({
             ...movie,
             _id: movie._id.toString(),
             userId: movie.userId.toString(),
             completed: movie.completed.toISOString().substring(0, 10),
+            hasStoryline: !!storyline,
         }));
 
         return { movies, page: data.page };

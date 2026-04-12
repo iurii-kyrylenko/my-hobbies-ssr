@@ -1,11 +1,11 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronDownIcon, PencilIcon, TrashIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
-import { Book } from "~/server/books";
+import { BookReview } from "~/server/books";
 import { BookInfo } from "./BookInfo";
 import { Link } from "@tanstack/react-router";
 
 export function BookCard({ book, userId, onDeleteBook }: {
-    book: Book,
+    book: BookReview,
     userId?: string,
     onDeleteBook: () => void,
 }) {
@@ -46,7 +46,7 @@ export function BookCard({ book, userId, onDeleteBook }: {
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
                     </>}
-                {book.storyline && <Link
+                {book.hasStoryline && <Link
                     className={userId === book.userId ? "ml-auto" : ""}
                     to="/graph/$type/$id"
                     params={{ type: "book", id: book._id }}
