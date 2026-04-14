@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 import { BookCard } from "~/components/BookCard";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
 import { Severity, useNotification } from "~/components/notifications";
+import { PageUp } from "~/components/PageUp";
 
 interface BookToDelete {
     _id: string;
@@ -24,6 +25,9 @@ export const booksQueryOptions = (userId: string, filter?: string) =>
         }),
         getNextPageParam: (lastPage) =>
             lastPage.books.length === pageSize ? lastPage.page + 1 : undefined,
+        getPreviousPageParam: (firstPage) =>
+            firstPage.page > 1 ? firstPage.page - 1 : undefined,
+        maxPages: 3,
         initialPageParam: 1,
         staleTime: 1000 * 60,
     });
@@ -51,6 +55,9 @@ function RouteComponent() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
+        fetchPreviousPage,
+        hasPreviousPage,
+        isFetchingPreviousPage,
     } = useInfiniteQuery(booksQueryOptions(userId, filter));
 
     const notify = useNotification();
@@ -83,9 +90,16 @@ function RouteComponent() {
         <>
             {user?._id === userId
                 ? <Link
-                    className="fixed z-10 up-6 right-6 size-12 text-2xl rounded-full bg-blue-400/80 text-white shadow-lg flex items-center justify-center transition-colors"
+                    className="fixed z-10 top-20 right-6 size-12 text-2xl rounded-full border-2 border-blue-400 flex items-center justify-center transition-colors opacity-60"
                     to="/books/new">+</Link>
                 : null}
+
+            {hasPreviousPage &&
+                <PageUp
+                    isDisabled={isFetchingPreviousPage}
+                    onTop={() => queryClient.resetQueries({ queryKey: ["books", userId, filter] })}
+                    onUp={fetchPreviousPage}
+                />}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 m-4 gap-4 items-start">
                 {data?.pages.map((page) => (
@@ -111,8 +125,8 @@ function RouteComponent() {
                 {isFetchingNextPage
                     ? "Loading..."
                     : hasNextPage
-                        ? <span className="cursor-pointer hover:underline">Load More</span>
-                        : "Nothing more to load"
+                        ? <span className="cursor-pointer hover:underline">Load next page</span>
+                        : "Last page"
                 }
             </button>
 
