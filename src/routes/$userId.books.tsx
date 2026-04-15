@@ -7,6 +7,7 @@ import { BookCard } from "~/components/BookCard";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
 import { Severity, useNotification } from "~/components/notifications";
 import { PageUp } from "~/components/PageUp";
+import { useJumpToTop } from "~/components/useJumpToTop";
 
 interface BookToDelete {
     _id: string;
@@ -80,6 +81,8 @@ function RouteComponent() {
         setBookToDelete(null);
     };
 
+    const { jump, isJumping } = useJumpToTop(queryClient, booksQueryOptions(userId, filter));
+
     React.useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             fetchNextPage()
@@ -96,8 +99,8 @@ function RouteComponent() {
 
             {hasPreviousPage &&
                 <PageUp
-                    isDisabled={isFetchingPreviousPage}
-                    onTop={() => queryClient.resetQueries({ queryKey: ["books", userId, filter] })}
+                    isDisabled={isFetchingPreviousPage || isJumping}
+                    onTop={jump}
                     onUp={fetchPreviousPage}
                 />}
 

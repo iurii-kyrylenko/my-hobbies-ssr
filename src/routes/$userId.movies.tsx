@@ -7,6 +7,7 @@ import { MovieCard } from "~/components/MovieCard";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
 import { Severity, useNotification } from "~/components/notifications";
 import { PageUp } from "~/components/PageUp";
+import { useJumpToTop } from "~/components/useJumpToTop";
 
 interface MovieToDelete {
     _id: string;
@@ -80,6 +81,8 @@ function RouteComponent() {
         setMovieToDelete(null);
     };
 
+    const { jump, isJumping } = useJumpToTop(queryClient, moviesQueryOptions(userId, filter));
+
     React.useEffect(() => {
         if (inView && hasNextPage && !isFetchingNextPage) {
             fetchNextPage()
@@ -96,8 +99,8 @@ function RouteComponent() {
 
             {hasPreviousPage &&
                 <PageUp
-                    isDisabled={isFetchingPreviousPage}
-                    onTop={() => queryClient.resetQueries({ queryKey: ["movies", userId, filter] })}
+                    isDisabled={isFetchingPreviousPage || isJumping}
+                    onTop={jump}
                     onUp={fetchPreviousPage}
                 />}
 
