@@ -12,14 +12,14 @@ const cleanSvg = (svgString: string) => {
 export const getGraphSvg = createServerFn({ method: "GET" })
     .inputValidator((d: { type: string, id: string }) => d)
     .handler(async ({ data: { type, id } }): Promise<string> => {
-        const collection = type == "book" ? "books" : "movies";
+        const collection = type === "book" ? "books" : "movies";
         const db = await connectToDatabase();
 
         const document = await db.collection<{ storyline: string }>(collection)
             .findOne({ _id: new ObjectId(id) });
 
         if (!document) {
-            throw new Error(`Book '${id}' not found`);
+            throw new Error(`${type} '${id}' not found`);
         }
 
         const dotString = document.storyline;

@@ -1,78 +1,76 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { Severity, useNotification } from "~/components/notifications";
 import { getGraphSvg } from "~/server/graph";
 
-
-export const Route = createFileRoute('/graph/$type/$id')({
-    loader: () => ({ pageName: "Storyline Graph" }),
-    component: RouteComponent,
+const graphQueryOptions = (params: { type: string, id: string }) => queryOptions({
+    queryKey: ["graph", params.type, params.id],
+    queryFn: () => getGraphSvg({ data: params }),
+    staleTime: Infinity,
+    retry: false,
 });
 
-function RouteComponent() {
-    const params = Route.useParams();
-    const notify = useNotification();
-
-    const { data, isError, error, isLoading } = useQuery({
-        queryKey: ["graph", params.type, params.id],
-        queryFn: () => getGraphSvg({ data: params }),
-        staleTime: Infinity,
-        retry: false,
-    });
-
-    useEffect(() => {
-        // Guard: Only run if we actually have the SVG data in the DOM
-        if (!data) return;
-
-        let panZoomInstance: any = null;
-
-        // Helper to handle the window resize event
-        const handleResize = () => {
-            if (panZoomInstance) {
-                panZoomInstance.resize();
-                panZoomInstance.fit();
-                panZoomInstance.center();
-            }
-        };
-
-        // Ensure the library is only loaded on the client.
-        import("svg-pan-zoom").then((svgPanZoom) => {
-            const container = document.getElementById("graph-container");
-            const svgElement = container?.querySelector("svg");
-
-            if (svgElement) {
-                panZoomInstance = svgPanZoom.default(svgElement, {
-                    zoomEnabled: true,
-                    controlIconsEnabled: true,
-                    fit: true,
-                    center: true,
-                    refreshRate: 'auto', // Important for smooth resizing
-                });
-
-                window.addEventListener("resize", handleResize);
-            }
-        });
-
-        return () => {
-            panZoomInstance?.destroy();
-            window.removeEventListener("resize", handleResize);
-        };
-    }, [data]);
-
-    if (isError) {
-        notify({ message: error.message, severity: Severity.ERR });
-    }
-
-    if (isLoading) {
+export const Route = createFileRoute('/graph/$type/$id')({
+    loader: async ({ context: { queryClient }, params }) => ({
+        data: await queryClient.ensureQueryData(graphQueryOptions(params)),
+        pageName: "Storyline Graph",
+    }),
+    component: RouteComponent,
+    pendingComponent: () => {
         return (
             <div className="p-8 flex gap-2 opacity-70">
                 <ArrowPathIcon className="size-5 animate-spin" />
                 Loading...
             </div>
-        )
-    }
+        );
+    },
+});
+
+function RouteComponent() {
+    const params = Route.useParams();
+    const { data } = useQuery(graphQueryOptions(params));
+
+    const panZoomRef = useRef<any>(null);
+
+    useEffect(() => {
+        let resizeListener: (() => void) | null = null;
+
+        const init = async () => {
+            const container = document.getElementById("graph-container");
+            const svgElement = container?.querySelector("svg");
+
+            if (!svgElement) return;
+
+            const { default: svgPanZoom } = await import("svg-pan-zoom");
+
+            panZoomRef.current = svgPanZoom(svgElement, {
+                zoomEnabled: true,
+                controlIconsEnabled: true,
+                fit: true,
+                center: true,
+            });
+
+            resizeListener = () => {
+                try {
+                    panZoomRef.current?.resize().fit().center();
+                } catch (e) {
+                    // Keeps the console clean during extreme window resizing
+                    // console.warn(e);
+                }
+            };
+
+            window.addEventListener("resize", resizeListener);
+        };
+
+        init();
+
+        return () => {
+            panZoomRef.current?.destroy();
+            panZoomRef.current = null;
+            if (resizeListener) window.removeEventListener("resize", resizeListener);
+        };
+    }, [data]);
 
     return (
         <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
