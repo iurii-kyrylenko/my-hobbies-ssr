@@ -2,20 +2,21 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { getGraphSvg } from "~/server/graph";
+import { getGraphSvg } from "~/server/components/getGraphSvg";
 
 const graphQueryOptions = (params: { type: string, id: string }) => queryOptions({
     queryKey: ["graph", params.type, params.id],
+    structuralSharing: false,
     queryFn: () => getGraphSvg({ data: params }),
     staleTime: Infinity,
     retry: false,
 });
 
 export const Route = createFileRoute('/graph/$type/$id')({
-    loader: async ({ context: { queryClient }, params }) => ({
-        data: await queryClient.ensureQueryData(graphQueryOptions(params)),
-        pageName: "Storyline Graph",
-    }),
+    loader: async ({ context: { queryClient }, params }) => {
+        await queryClient.ensureQueryData(graphQueryOptions(params));
+        return { pageName: "Storyline Graph" };
+    },
     component: RouteComponent,
     pendingComponent: () => {
         return (
@@ -30,21 +31,26 @@ export const Route = createFileRoute('/graph/$type/$id')({
 function RouteComponent() {
     const params = Route.useParams();
     const { data } = useQuery(graphQueryOptions(params));
+    const rsc = data?.rsc;
 
     const panZoomRef = useRef<any>(null);
 
+    // Pan / Zoom support
     useEffect(() => {
+        // The flag used in "Ignore Pattern" to prevent race condition
+        let ignore = false;
+
         let resizeListener: (() => void) | null = null;
 
         const init = async () => {
             const container = document.getElementById("graph-container");
             const svgElement = container?.querySelector("svg");
-
             if (!svgElement) return;
 
-            const { default: svgPanZoom } = await import("svg-pan-zoom");
+            const module = await import("svg-pan-zoom");
+            if (ignore) return; // Ignore stale resolution
 
-            panZoomRef.current = svgPanZoom(svgElement, {
+            panZoomRef.current = module.default(svgElement, {
                 zoomEnabled: true,
                 controlIconsEnabled: true,
                 fit: true,
@@ -66,21 +72,16 @@ function RouteComponent() {
         init();
 
         return () => {
+            ignore = true; // Mark as stale
             panZoomRef.current?.destroy();
             panZoomRef.current = null;
             if (resizeListener) window.removeEventListener("resize", resizeListener);
         };
-    }, [data]);
+    }, [rsc]);
 
     return (
         <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
-            <div
-                id="graph-container"
-                className="w-full h-[86vh] flex items-center justify-center p-2
-                    [&>svg]:w-full [&>svg]:h-full [&>svg]:block
-                    [&_.node]:cursor-pointer [&_.node]:transition-opacity [&_.node]:hover:opacity-80"
-                dangerouslySetInnerHTML={{ __html: data ?? "" }}
-            />
+            {rsc}
         </div>
     );
 }
