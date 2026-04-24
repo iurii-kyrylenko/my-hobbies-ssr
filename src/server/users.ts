@@ -97,8 +97,6 @@ export const registerFn = createServerFn({ method: "POST" })
             email: data.email,
             name: data.name,
         });
-
-        throw redirect({ to: "/" });
     });
 
 export const loginFn = createServerFn({ method: "POST" })
@@ -126,8 +124,7 @@ export const loginFn = createServerFn({ method: "POST" })
             name: user.name,
         });
 
-        // Redirect to protected area
-        throw redirect({ to: data.redirectTo });
+        return data.redirectTo;
     });
 
 export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
@@ -177,8 +174,6 @@ export const updateUser = createServerFn({ method: "POST" })
                 { _id: new ObjectId(data.userId) },
                 { $set: update },
             );
-
-        throw redirect({ to: "/people" });
     });
 
 export const getPeopleFn = createServerFn({ method: "GET" }).handler(async () => {

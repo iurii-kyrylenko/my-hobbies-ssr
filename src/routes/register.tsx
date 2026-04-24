@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Severity, useNotification } from "~/components/notifications";
 import { getCurrentUserFn, registerFn } from "~/server/users";
@@ -24,14 +23,15 @@ function RouteComponentWithGoogleReCaptchaProvider() {
 }
 
 function RouteComponent() {
-    const mutationFn = useServerFn(registerFn);
     const notify = useNotification();
     const { executeRecaptcha } = useGoogleReCaptcha();
+    const navigate = Route.useNavigate();
 
     const mutation = useMutation({
-        mutationFn,
+        mutationFn: registerFn,
         onSuccess: () => {
             notify({ message: "You were registered", severity: Severity.MSG });
+            navigate({ to: "/" });
         },
         onError: (error) => {
             notify({ message: error.message, severity: Severity.ERR });

@@ -1,6 +1,5 @@
 import { Dialog, DialogBackdrop, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { Link, useLocation, useRouteContext, useRouter } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import { Bars3Icon, HomeIcon, UsersIcon, UserPlusIcon, BookOpenIcon, FilmIcon, Cog6ToothIcon, ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
 import { logoutFn } from "~/server/users";
@@ -50,7 +49,6 @@ export function Drawer(
 export function MyDrawer() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
-    const logoutServerFn = useServerFn(logoutFn);
     const { user } = useRouteContext({ strict: false });
     const { pathname } = useLocation();
     const notify = useNotification();
@@ -58,7 +56,7 @@ export function MyDrawer() {
     const handleClose = () => setIsOpen(false);
 
     const handleLogout = async () => {
-        await logoutServerFn();
+        await logoutFn();
         await router.invalidate();
         notify({ message: "You were logged out", severity: Severity.MSG });
     };

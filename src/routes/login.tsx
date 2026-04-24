@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { FormEvent, useState } from "react";
 import z from "zod";
 import { Severity, useNotification } from "~/components/notifications";
@@ -23,13 +22,14 @@ export const Route = createFileRoute("/login")({
 
 function RouteComponent() {
     const search = Route.useSearch();
-    const mutationFn = useServerFn(loginFn);
     const notify = useNotification();
+    const navigate = Route.useNavigate();
 
     const mutation = useMutation({
-        mutationFn,
-        onSuccess: () => {
+        mutationFn: loginFn,
+        onSuccess: (redirectTo) => {
             notify({ message: "You were logged in", severity: Severity.MSG });
+            navigate({ to: redirectTo });
         },
         onError: (error) => {
             notify({ message: error.message, severity: Severity.ERR });
