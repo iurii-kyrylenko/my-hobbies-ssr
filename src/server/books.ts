@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { connectToDatabase } from "../lib/db";
 import { ObjectId } from "mongodb";
+import { pageSize } from "./constants";
 
 interface BookDoc {
     _id: ObjectId;
@@ -45,8 +46,6 @@ interface CreateBook {
     googleBookId: string;
     storyline: string;
 }
-
-export const pageSize = 12;
 
 export const getPageBooks = createServerFn({ method: "GET" })
     .inputValidator((d: { userId: string, filter?: string, page: number }) => d)
