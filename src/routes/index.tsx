@@ -19,7 +19,6 @@ function Home() {
                     <li>Add an item (book or movie) to the list.</li>
                     <li>Modify an existing item.</li>
                     <li>Remove an item.</li>
-                    <li>Perform search for specific item(s).</li>
                 </ul>
             </div>
 
