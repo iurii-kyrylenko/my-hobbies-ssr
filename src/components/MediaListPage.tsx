@@ -10,6 +10,7 @@ import { useInView } from "react-intersection-observer";
 import { PageUp } from "~/components/PageUp";
 import { useJumpToTop } from "~/components/useJumpToTop";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
+import { ArrowPathIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 interface MediaListPageProps<TPage, TItem> {
     userId: string;
@@ -40,6 +41,10 @@ export function MediaListPage<
     const queryClient = useQueryClient();
     const { ref, inView } = useInView();
     const [itemToDelete, setItemToDelete] = React.useState<TItem | null>(null);
+
+    const isSafari = React.useMemo(() =>
+        /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
+        []);
 
     const query = useInfiniteQuery(queryOptions);
     const { jump, isJumping } = useJumpToTop(queryClient, queryOptions);
@@ -77,13 +82,19 @@ export function MediaListPage<
                 ))}
             </div>
 
-            <button
-                ref={ref}
-                className="mb-16 p-2 border rounded-md"
-                disabled={!query.hasNextPage || query.isFetchingNextPage}
-            >
-                {query.isFetchingNextPage ? "Loading..." : query.hasNextPage ? "Load next page" : "Last page"}
-            </button>
+            {query.hasNextPage && (
+                <button
+                    ref={isSafari ? null : ref}
+                    onClick={() => query.fetchNextPage()}
+                    disabled={query.isFetchingNextPage}
+                    className="size-12 mb-3 ml-10 rounded-full border-2 border-blue-400 flex items-center justify-center hover:cursor-pointer"
+                >
+                    {query.isFetchingNextPage
+                        ? <ArrowPathIcon className="size-5 animate-spin text-gray-400" />
+                        : <ChevronDownIcon className="size-5 stroke-[2]" />
+                    }
+                </button>
+            )}
 
             <ConfirmationDialog
                 isOpen={!!itemToDelete}
