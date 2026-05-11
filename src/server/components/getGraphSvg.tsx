@@ -1,7 +1,8 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { createServerFn } from "@tanstack/react-start";
-import { renderServerComponent } from "@tanstack/react-start/rsc";
+import { createCompositeComponent } from "@tanstack/react-start/rsc";
 import { ObjectId } from "mongodb";
+import { ReactNode } from "react";
 import z from "zod";
 import { connectToDatabase } from "~/lib/db";
 
@@ -22,6 +23,10 @@ const cleanSvg = (svgString: string) => {
         .replace(/width="[\d\.]+(pt|px)"/g, "")
         .replace(/height="[\d\.]+(pt|px)"/g, "");
 };
+
+interface CompositeLayoutProps {
+    copyButton: (data: { dotString: string }) => ReactNode;
+}
 
 export const getGraphSvg = createServerFn()
     .inputValidator(z.object({ type: z.string(), id: z.string() }))
@@ -45,6 +50,13 @@ export const getGraphSvg = createServerFn()
         const svgString = await Graphviz.load().then(graphviz => graphviz.dot(dotString));
         const content = cleanSvg(svgString);
 
-        const rsc = await renderServerComponent(<Svg ssvg={content} />);
-        return { rsc };
+        return createCompositeComponent(
+            (props: CompositeLayoutProps) =>
+                <div className="relative group">
+                    <div className="absolute right-24 bottom-8">
+                        {props.copyButton({ dotString })}
+                    </div>
+                    <Svg ssvg={content} />
+                </div>
+        );
     });

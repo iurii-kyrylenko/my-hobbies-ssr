@@ -1,8 +1,9 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useRef } from "react";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { getGraphSvg } from "~/server/components/getGraphSvg";
+import { CompositeComponent } from "@tanstack/react-start/rsc";
 
 const graphQueryOptions = (params: { type: string, id: string }) => queryOptions({
     queryKey: ["graph", params.type, params.id],
@@ -30,9 +31,7 @@ export const Route = createFileRoute('/graph/$type/$id')({
 
 function RouteComponent() {
     const params = Route.useParams();
-    const { data } = useQuery(graphQueryOptions(params));
-    const rsc = data?.rsc;
-
+    const { data: src } = useQuery(graphQueryOptions(params));
     const panZoomRef = useRef<any>(null);
 
     // Pan / Zoom support
@@ -77,11 +76,20 @@ function RouteComponent() {
             panZoomRef.current = null;
             if (resizeListener) window.removeEventListener("resize", resizeListener);
         };
-    }, [rsc]);
+    }, [src]);
 
     return (
-        <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
-            {rsc}
-        </div>
+        <>
+            {src && <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
+                <CompositeComponent src={src} copyButton={({ dotString }) =>
+                    <button
+                        className="text-gray-100 bg-gray-400 hover:bg-gray-900 opacity-80 p-1 rounded-md"
+                        onClick={() => navigator.clipboard?.writeText(dotString)}
+                    >
+                        <ClipboardDocumentIcon className="size-6 stroke-2" />
+                    </button>
+                } />
+            </div>}
+        </>
     );
 }
