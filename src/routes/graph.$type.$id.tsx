@@ -1,6 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowPathIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { getGraphSvg } from "~/server/components/getGraphSvg";
 import { CompositeComponent } from "@tanstack/react-start/rsc";
@@ -33,6 +33,7 @@ function RouteComponent() {
     const params = Route.useParams();
     const { data: src } = useQuery(graphQueryOptions(params));
     const panZoomRef = useRef<any>(null);
+    const [copied, setCopied] = useState(false);
 
     // Pan / Zoom support
     useEffect(() => {
@@ -84,9 +85,13 @@ function RouteComponent() {
                 <CompositeComponent src={src} copyButton={({ dotString }) =>
                     <button
                         className="text-gray-100 bg-gray-400 hover:bg-gray-900 opacity-80 p-1 rounded-md"
-                        onClick={() => navigator.clipboard?.writeText(dotString)}
+                        onClick={() => {
+                            navigator.clipboard?.writeText(dotString);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 1800);
+                        }}
                     >
-                        <ClipboardDocumentIcon className="size-6 stroke-2" />
+                        <ClipboardDocumentIcon className={`size-6 stroke-2 ${copied ? "animate-spin" : ""}`} />
                     </button>
                 } />
             </div>}
