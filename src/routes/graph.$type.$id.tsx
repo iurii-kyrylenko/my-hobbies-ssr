@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowPathIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { getGraphSvg } from "~/server/components/getGraphSvg";
 import { CompositeComponent } from "@tanstack/react-start/rsc";
+import { Severity, useNotification } from "~/components/notifications";
 
 const graphQueryOptions = (params: { type: string, id: string }) => queryOptions({
     queryKey: ["graph", params.type, params.id],
@@ -31,9 +32,10 @@ export const Route = createFileRoute('/graph/$type/$id')({
 
 function RouteComponent() {
     const params = Route.useParams();
-    const { data: src } = useQuery(graphQueryOptions(params));
+    const { data: src, isError, error } = useQuery(graphQueryOptions(params));
     const panZoomRef = useRef<any>(null);
     const [copied, setCopied] = useState(false);
+    const notify = useNotification();
 
     // Pan / Zoom support
     useEffect(() => {
@@ -79,14 +81,18 @@ function RouteComponent() {
         };
     }, [src]);
 
+    if (isError) {
+        notify({ message: error.message, severity: Severity.ERR })
+    }
+
     return (
         <>
             {src && <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
-                <CompositeComponent src={src} copyButton={({ dotString }) =>
+                <CompositeComponent src={src} copyButton={({ inputString }) =>
                     <button
                         className="text-gray-100 bg-gray-400 hover:bg-gray-900 opacity-80 p-1 rounded-md"
                         onClick={() => {
-                            navigator.clipboard?.writeText(dotString);
+                            navigator.clipboard?.writeText(inputString);
                             setCopied(true);
                             setTimeout(() => setCopied(false), 1800);
                         }}

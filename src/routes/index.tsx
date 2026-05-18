@@ -70,6 +70,9 @@ function Home() {
                 Change log:
                 <ul className="list-disc pl-8">
                     <li>
+                        May 18, 2026: Add mermaid syntax support to show the storyline.
+                    </li>
+                    <li>
                         Apr 10, 2026: Add feature Storyline Graph (render svg generated from graphviz-dot string).
                     </li>
                     <li>

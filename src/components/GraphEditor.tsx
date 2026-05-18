@@ -2,8 +2,9 @@ import { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import EditorComponent from "react-simple-code-editor";
 import prism from 'prismjs';
-import "prismjs/components/prism-dot"; // Import DOT language support
-import "prismjs/themes/prism-tomorrow.css"; // Import a dark theme for Prism
+import "prismjs/components/prism-dot"; // DOT language support
+import "prismjs/components/prism-mermaid"; // MMD support
+import "prismjs/themes/prism-tomorrow.css"; // A dark theme for Prism
 
 const Editor = (EditorComponent as any).default || EditorComponent;
 
@@ -46,14 +47,18 @@ export function GraphEditor({ isOpen, onClose, onChange, code }: {
                                     as="h3"
                                     className="text-lg font-medium leading-6 text-gray-900 dark:text-gray-300"
                                 >
-                                    Dot code
+                                    {code.startsWith("%% mmd") ? "Mermaid code" : "Dot code"}
                                 </DialogTitle>
                                 <div className="mt-2">
                                     <Editor
                                         autoFocus
                                         value={code}
                                         onValueChange={onChange}
-                                        highlight={(code: string) => prism.highlight(code, prism.languages.dot, "dot")}
+                                        highlight={(code: string) => (
+                                            code.startsWith("%% mmd")
+                                                ? prism.highlight(code, prism.languages.mermaid, "mermaid")
+                                                : prism.highlight(code, prism.languages.dot, "dot")
+                                        )}
                                         padding={10}
                                         className="font-mono text-xs border border-[#aaa]"
                                     />

@@ -25,8 +25,26 @@ const cleanSvg = (svgString: string) => {
 };
 
 interface CompositeLayoutProps {
-    copyButton: (data: { dotString: string }) => ReactNode;
+    copyButton: (data: { inputString: string }) => ReactNode;
 }
+
+const handleMmd = async (mmdString: string) => {
+    const base64 = Buffer.from(mmdString, "utf8")
+        .toString("base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+
+    const endpointUrl = `https://mermaid.ink/svg/${base64}`;
+
+    const response = await fetch(endpointUrl);
+
+    if (!response.ok) {
+        throw new Error(`Fetch mermaid svg error! status: ${response.status}`);
+    }
+
+    return response.text();
+};
 
 export const getGraphSvg = createServerFn()
     .inputValidator(z.object({ type: z.string(), id: z.string() }))
@@ -41,20 +59,23 @@ export const getGraphSvg = createServerFn()
             throw new Error(`${type} '${id}' not found`);
         }
 
-        const dotString = document.storyline;
+        const inputString = document.storyline;
 
-        if (!dotString) {
-            throw new Error(`Storyline not defined for book '${id}'`);
+        if (!inputString) {
+            throw new Error(`Storyline not defined for ${type} '${id}'`);
         }
 
-        const svgString = await Graphviz.load().then(graphviz => graphviz.dot(dotString));
+        const svgString = inputString.startsWith("%% mmd")
+            ? await handleMmd(inputString)
+            : await Graphviz.load().then(graphviz => graphviz.dot(inputString));
+
         const content = cleanSvg(svgString);
 
         return createCompositeComponent(
             (props: CompositeLayoutProps) =>
                 <div className="relative group">
                     <div className="absolute right-24 bottom-8">
-                        {props.copyButton({ dotString })}
+                        {props.copyButton({ inputString })}
                     </div>
                     <Svg ssvg={content} />
                 </div>
