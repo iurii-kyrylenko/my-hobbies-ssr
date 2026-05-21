@@ -40,7 +40,7 @@ const handleMmd = async (mmdString: string) => {
     const response = await fetch(endpointUrl);
 
     if (!response.ok) {
-        throw new Error(`Fetch mermaid svg error! status: ${response.status}`);
+        throw new Error(`Fetch mermaid svg error: ${await response.text()}`);
     }
 
     return response.text();
