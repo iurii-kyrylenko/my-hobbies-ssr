@@ -1,7 +1,7 @@
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
 import { useEffect, useRef, useState } from "react";
-import { ArrowPathIcon, ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import { getGraphSvg } from "~/server/components/getGraphSvg";
 import { CompositeComponent } from "@tanstack/react-start/rsc";
 import { Severity, useNotification } from "~/components/notifications";
@@ -32,7 +32,7 @@ export const Route = createFileRoute('/graph/$type/$id')({
 
 function RouteComponent() {
     const params = Route.useParams();
-    const { data: src, isError, error } = useQuery(graphQueryOptions(params));
+    const { data: src, isError, error } = useSuspenseQuery(graphQueryOptions(params));
     const panZoomRef = useRef<any>(null);
     const [copied, setCopied] = useState(false);
     const notify = useNotification();
@@ -86,21 +86,21 @@ function RouteComponent() {
     }
 
     return (
-        <>
-            {src && <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
-                <CompositeComponent src={src} copyButton={({ inputString }) =>
-                    <button
-                        className="text-gray-100 bg-gray-400 hover:bg-gray-900 opacity-80 p-1 rounded-md"
-                        onClick={() => {
-                            navigator.clipboard?.writeText(inputString);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 1800);
-                        }}
-                    >
-                        <ClipboardDocumentIcon className={`size-6 stroke-2 ${copied ? "animate-spin" : ""}`} />
-                    </button>
-                } />
-            </div>}
-        </>
+        <div className="dark:invert dark:hue-rotate-180 w-full max-w-5xl mx-auto overflow-hidden border border-slate-300 rounded-xl shadow-sm">
+            <CompositeComponent src={src} copyButton={({ inputString }) =>
+                <button
+                    className="text-gray-100 bg-gray-400 hover:bg-gray-900 opacity-80 p-1 rounded-md"
+                    onClick={() => {
+                        navigator.clipboard?.writeText(inputString);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 1200);
+                    }}
+                >
+                    {copied ?
+                        <ArrowPathIcon className="size-6 animate-spin" /> :
+                        <ClipboardIcon className="size-6 stroke-2" />}
+                </button>
+            } />
+        </div>
     );
 }

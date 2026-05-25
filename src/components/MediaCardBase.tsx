@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
 
@@ -60,7 +60,7 @@ export function MediaCardBase({
                         to="/graph/$type/$id"
                         params={{ type: storyline.type, id: storyline.id }}
                     >
-                        <RectangleGroupIcon className="size-5 text-blue-400" />
+                        <SparklesIcon className="size-5 text-blue-400" />
                     </Link>
                 )}
             </div>

@@ -20,7 +20,7 @@ export function NotificationSink() {
     const notify = useNotification();
 
     React.useEffect(() => {
-        const intervalId = setTimeout(() => notify(null), 3000);
+        const intervalId = setTimeout(() => notify(null), 4000);
         return () => clearTimeout(intervalId);
     }, [data, notify]);
 
@@ -28,7 +28,7 @@ export function NotificationSink() {
 
     return (
         <>
-            {data && <div className={`fixed bottom-6 ps-3 pe-4 left-20 h-12 flex items-center text-white ${clsSeverity}`}>
+            {data && <div className={`fixed bottom-6 ps-3 pe-4 left-20 min-h-12 flex items-center text-white ${clsSeverity}`}>
                 <span
                     className="pr-3 opacity-70 hover:opacity-100 cursor-pointer"
                     onClick={() => notify(null)}
