@@ -12,7 +12,8 @@ export function MovieCard({ movie, userId, onDeleteMovie }: {
             userId={userId}
             ownerId={movie.userId}
             onDelete={onDeleteMovie}
-            editLink={{ to: "/movies/$movieId", params: { movieId: movie._id } }}
+            mediaId={movie._id}
+            collection="movies"
             storyline={movie.hasStoryline ? { type: "movie", id: movie._id } : undefined}
             header={
                 <>

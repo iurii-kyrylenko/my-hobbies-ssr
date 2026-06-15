@@ -20,9 +20,10 @@ import { Route as UserIdMoviesRouteImport } from './routes/$userId.movies'
 import { Route as UserIdBooksRouteImport } from './routes/$userId.books'
 import { Route as GraphTypeIdRouteImport } from './routes/graph.$type.$id'
 import { Route as AuthMoviesNewRouteImport } from './routes/_auth/movies.new'
-import { Route as AuthMoviesMovieIdRouteImport } from './routes/_auth/movies.$movieId'
+import { Route as AuthMoviesIdRouteImport } from './routes/_auth/movies.$id'
 import { Route as AuthBooksNewRouteImport } from './routes/_auth/books.new'
-import { Route as AuthBooksBookIdRouteImport } from './routes/_auth/books.$bookId'
+import { Route as AuthBooksIdRouteImport } from './routes/_auth/books.$id'
+import { Route as AuthExtrasCollectionIdRouteImport } from './routes/_auth/extras.$collection.$id'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -78,9 +79,9 @@ const AuthMoviesNewRoute = AuthMoviesNewRouteImport.update({
   path: '/movies/new',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthMoviesMovieIdRoute = AuthMoviesMovieIdRouteImport.update({
-  id: '/movies/$movieId',
-  path: '/movies/$movieId',
+const AuthMoviesIdRoute = AuthMoviesIdRouteImport.update({
+  id: '/movies/$id',
+  path: '/movies/$id',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthBooksNewRoute = AuthBooksNewRouteImport.update({
@@ -88,9 +89,14 @@ const AuthBooksNewRoute = AuthBooksNewRouteImport.update({
   path: '/books/new',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthBooksBookIdRoute = AuthBooksBookIdRouteImport.update({
-  id: '/books/$bookId',
-  path: '/books/$bookId',
+const AuthBooksIdRoute = AuthBooksIdRouteImport.update({
+  id: '/books/$id',
+  path: '/books/$id',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+const AuthExtrasCollectionIdRoute = AuthExtrasCollectionIdRouteImport.update({
+  id: '/extras/$collection/$id',
+  path: '/extras/$collection/$id',
   getParentRoute: () => AuthRouteRoute,
 } as any)
 
@@ -103,11 +109,12 @@ export interface FileRoutesByFullPath {
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/profile': typeof AuthProfileRoute
-  '/books/$bookId': typeof AuthBooksBookIdRoute
+  '/books/$id': typeof AuthBooksIdRoute
   '/books/new': typeof AuthBooksNewRoute
-  '/movies/$movieId': typeof AuthMoviesMovieIdRoute
+  '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
+  '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,11 +125,12 @@ export interface FileRoutesByTo {
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/profile': typeof AuthProfileRoute
-  '/books/$bookId': typeof AuthBooksBookIdRoute
+  '/books/$id': typeof AuthBooksIdRoute
   '/books/new': typeof AuthBooksNewRoute
-  '/movies/$movieId': typeof AuthMoviesMovieIdRoute
+  '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
+  '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,11 +143,12 @@ export interface FileRoutesById {
   '/$userId/books': typeof UserIdBooksRoute
   '/$userId/movies': typeof UserIdMoviesRoute
   '/_auth/profile': typeof AuthProfileRoute
-  '/_auth/books/$bookId': typeof AuthBooksBookIdRoute
+  '/_auth/books/$id': typeof AuthBooksIdRoute
   '/_auth/books/new': typeof AuthBooksNewRoute
-  '/_auth/movies/$movieId': typeof AuthMoviesMovieIdRoute
+  '/_auth/movies/$id': typeof AuthMoviesIdRoute
   '/_auth/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
+  '/_auth/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,11 +161,12 @@ export interface FileRouteTypes {
     | '/$userId/books'
     | '/$userId/movies'
     | '/profile'
-    | '/books/$bookId'
+    | '/books/$id'
     | '/books/new'
-    | '/movies/$movieId'
+    | '/movies/$id'
     | '/movies/new'
     | '/graph/$type/$id'
+    | '/extras/$collection/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -167,11 +177,12 @@ export interface FileRouteTypes {
     | '/$userId/books'
     | '/$userId/movies'
     | '/profile'
-    | '/books/$bookId'
+    | '/books/$id'
     | '/books/new'
-    | '/movies/$movieId'
+    | '/movies/$id'
     | '/movies/new'
     | '/graph/$type/$id'
+    | '/extras/$collection/$id'
   id:
     | '__root__'
     | '/'
@@ -183,11 +194,12 @@ export interface FileRouteTypes {
     | '/$userId/books'
     | '/$userId/movies'
     | '/_auth/profile'
-    | '/_auth/books/$bookId'
+    | '/_auth/books/$id'
     | '/_auth/books/new'
-    | '/_auth/movies/$movieId'
+    | '/_auth/movies/$id'
     | '/_auth/movies/new'
     | '/graph/$type/$id'
+    | '/_auth/extras/$collection/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -281,11 +293,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthMoviesNewRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_auth/movies/$movieId': {
-      id: '/_auth/movies/$movieId'
-      path: '/movies/$movieId'
-      fullPath: '/movies/$movieId'
-      preLoaderRoute: typeof AuthMoviesMovieIdRouteImport
+    '/_auth/movies/$id': {
+      id: '/_auth/movies/$id'
+      path: '/movies/$id'
+      fullPath: '/movies/$id'
+      preLoaderRoute: typeof AuthMoviesIdRouteImport
       parentRoute: typeof AuthRouteRoute
     }
     '/_auth/books/new': {
@@ -295,11 +307,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthBooksNewRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/_auth/books/$bookId': {
-      id: '/_auth/books/$bookId'
-      path: '/books/$bookId'
-      fullPath: '/books/$bookId'
-      preLoaderRoute: typeof AuthBooksBookIdRouteImport
+    '/_auth/books/$id': {
+      id: '/_auth/books/$id'
+      path: '/books/$id'
+      fullPath: '/books/$id'
+      preLoaderRoute: typeof AuthBooksIdRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
+    '/_auth/extras/$collection/$id': {
+      id: '/_auth/extras/$collection/$id'
+      path: '/extras/$collection/$id'
+      fullPath: '/extras/$collection/$id'
+      preLoaderRoute: typeof AuthExtrasCollectionIdRouteImport
       parentRoute: typeof AuthRouteRoute
     }
   }
@@ -307,18 +326,20 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteRouteChildren {
   AuthProfileRoute: typeof AuthProfileRoute
-  AuthBooksBookIdRoute: typeof AuthBooksBookIdRoute
+  AuthBooksIdRoute: typeof AuthBooksIdRoute
   AuthBooksNewRoute: typeof AuthBooksNewRoute
-  AuthMoviesMovieIdRoute: typeof AuthMoviesMovieIdRoute
+  AuthMoviesIdRoute: typeof AuthMoviesIdRoute
   AuthMoviesNewRoute: typeof AuthMoviesNewRoute
+  AuthExtrasCollectionIdRoute: typeof AuthExtrasCollectionIdRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthProfileRoute: AuthProfileRoute,
-  AuthBooksBookIdRoute: AuthBooksBookIdRoute,
+  AuthBooksIdRoute: AuthBooksIdRoute,
   AuthBooksNewRoute: AuthBooksNewRoute,
-  AuthMoviesMovieIdRoute: AuthMoviesMovieIdRoute,
+  AuthMoviesIdRoute: AuthMoviesIdRoute,
   AuthMoviesNewRoute: AuthMoviesNewRoute,
+  AuthExtrasCollectionIdRoute: AuthExtrasCollectionIdRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

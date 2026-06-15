@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
 
@@ -7,7 +7,8 @@ interface MediaCardBaseProps {
     userId?: string;
     ownerId: string;
     onDelete: () => void;
-    editLink: { to: string; params: Record<string, string> };
+    mediaId: string;
+    collection: "books" | "movies";
     storyline?: { type: "book" | "movie"; id: string };
     header: ReactNode;
     children: ReactNode; // The Info component (BookInfo or MovieInfo)
@@ -17,12 +18,23 @@ export function MediaCardBase({
     userId,
     ownerId,
     onDelete,
-    editLink,
+    mediaId,
+    collection,
     storyline,
     header,
     children,
 }: MediaCardBaseProps) {
     const isOwner = userId === ownerId;
+
+    const editLink = {
+        to: `/${collection}/$id`,
+        params: { id: mediaId },
+    };
+
+    const extrasLink = {
+        to: "/extras/$collection/$id",
+        params: { collection, id: mediaId },
+    };
 
     return (
         <div className="p-2 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50">
@@ -48,6 +60,9 @@ export function MediaCardBase({
                     <>
                         <Link to={editLink.to} params={editLink.params}>
                             <PencilIcon className="size-5 text-blue-400" />
+                        </Link>
+                        <Link to={extrasLink.to} params={extrasLink.params}>
+                            <Cog6ToothIcon className="size-5 text-blue-400" />
                         </Link>
                         <button className="cursor-pointer" onClick={onDelete}>
                             <TrashIcon className="size-5 text-blue-400" />

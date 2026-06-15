@@ -5,11 +5,11 @@ import { BookForm, BookFormData, FormDataChangeEvent } from "~/components/BookFo
 import { Severity, useNotification } from "~/components/notifications";
 import { getBook, updateBook } from "~/server/books";
 
-export const Route = createFileRoute("/_auth/books/$bookId")({
+export const Route = createFileRoute("/_auth/books/$id")({
     loader: async ({ context, params }) => ({
         data: await getBook({
             data: {
-                bookId: params.bookId,
+                bookId: params.id,
                 userId: context.user._id,
             },
         }),
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_auth/books/$bookId")({
 function RouteComponent() {
     const { user, queryClient } = Route.useRouteContext();
     const navigate = Route.useNavigate();
-    const { bookId } = Route.useParams();
+    const { id } = Route.useParams();
     const router = useRouter();
 
     const { data } = Route.useLoaderData();
@@ -32,7 +32,7 @@ function RouteComponent() {
         onSuccess: async () => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["books", user._id], refetchType: "inactive" }),
-                queryClient.invalidateQueries({ queryKey: ["graph", "book", bookId] }),
+                queryClient.invalidateQueries({ queryKey: ["graph", "book", id] }),
             ]);
 
             await router.invalidate();
@@ -59,7 +59,7 @@ function RouteComponent() {
     const handleSubmit = () => {
         mutation.mutate({
             data: {
-                _id: bookId,
+                _id: id,
                 userId: user._id,
                 ...formData,
             },

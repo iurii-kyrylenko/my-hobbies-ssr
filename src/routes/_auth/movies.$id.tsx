@@ -5,11 +5,11 @@ import { MovieForm, MovieFormData, FormDataChangeEvent } from "~/components/Movi
 import { Severity, useNotification } from "~/components/notifications";
 import { getMovie, updateMovie } from "~/server/movies";
 
-export const Route = createFileRoute("/_auth/movies/$movieId")({
+export const Route = createFileRoute("/_auth/movies/$id")({
     loader: async ({ context, params }) => ({
         data: await getMovie({
             data: {
-                movieId: params.movieId,
+                movieId: params.id,
                 userId: context.user._id,
             },
         }),
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/_auth/movies/$movieId")({
 function RouteComponent() {
     const { user, queryClient } = Route.useRouteContext();
     const navigate = Route.useNavigate();
-    const { movieId } = Route.useParams();
+    const { id } = Route.useParams();
     const router = useRouter();
 
     const { data } = Route.useLoaderData();
@@ -32,7 +32,7 @@ function RouteComponent() {
         onSuccess: async () => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["movies", user._id], refetchType: "inactive" }),
-                queryClient.invalidateQueries({ queryKey: ["graph", "movie", movieId] }),
+                queryClient.invalidateQueries({ queryKey: ["graph", "movie", id] }),
             ]);
 
             await router.invalidate();
@@ -59,7 +59,7 @@ function RouteComponent() {
     const handleSubmit = () => {
         mutation.mutate({
             data: {
-                _id: movieId,
+                _id: id,
                 userId: user._id,
                 ...formData,
             },

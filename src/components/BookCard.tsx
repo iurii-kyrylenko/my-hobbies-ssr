@@ -12,7 +12,8 @@ export function BookCard({ book, userId, onDeleteBook }: {
             userId={userId}
             ownerId={book.userId}
             onDelete={onDeleteBook}
-            editLink={{ to: "/books/$bookId", params: { bookId: book._id } }}
+            mediaId={book._id}
+            collection="books"
             storyline={book.hasStoryline ? { type: "book", id: book._id } : undefined}
             header={
                 <>
