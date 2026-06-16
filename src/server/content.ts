@@ -20,6 +20,15 @@ interface CreateContent {
     content: string;
 }
 
+interface UpdateContent {
+    collection: string;
+    userId: string;
+    mediaId: string;
+    title: string;
+    content: string;
+    index: number;
+}
+
 interface RemoveContent {
     collection: string;
     userId: string;
@@ -52,6 +61,18 @@ export const createContent = createServerFn({ method: "POST" })
             .updateOne(
                 { _id: new ObjectId(data.mediaId), userId: new ObjectId(data.userId) },
                 { $addToSet: { extras: { title: data.title, content: data.content } } }
+            );
+    });
+
+export const updateContent = createServerFn({ method: "POST" })
+    .inputValidator((data: UpdateContent) => data)
+    .handler(async ({ data }) => {
+        const db = await connectToDatabase();
+
+        await db.collection(data.collection)
+            .updateOne(
+                { _id: new ObjectId(data.mediaId), userId: new ObjectId(data.userId) },
+                { $set: { [`extras.${data.index}`]: { title: data.title, content: data.content } } }
             );
     });
 

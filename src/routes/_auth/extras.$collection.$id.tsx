@@ -5,7 +5,7 @@ import { useState } from "react";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
 import { ContentEditor } from "~/components/ContentEditor";
 import { Severity, useNotification } from "~/components/notifications";
-import { createContent, getExtras, removeContent } from "~/server/content";
+import { createContent, getExtras, removeContent, updateContent } from "~/server/content";
 
 export const extrasQueryOptions = (collection: string, mediaId: string) =>
     queryOptions({
@@ -14,7 +14,6 @@ export const extrasQueryOptions = (collection: string, mediaId: string) =>
         staleTime: Infinity,
         retry: false,
     });
-
 
 export const Route = createFileRoute("/_auth/extras/$collection/$id")({
     loader: async ({ params, context: { queryClient } }) => {
@@ -35,36 +34,63 @@ function RouteComponent() {
     const [code, setCode] = useState("");
 
     const [itemToDelete, setItemToDelete] = useState<{ id: number, title: string } | null>(null);
+    const [itemToUpdate, setItemToUpdate] = useState<number | null>(null);
 
-    const handleAddContent = () => {
+    const startAddContent = () => {
         setContentEditorOpen(true);
+        setTitle("");
+        setCode("");
+    };
+
+    const startUpdateContent = ({ id, title, content }: { id: number, title: string, content: string }) => () => {
+        setItemToUpdate(id);
+        setTitle(title);
+        setCode(content);
+    };
+
+    const startRemoveContent = ({ id, title }: { id: number, title: string }) => () => {
+        setItemToDelete({ id, title });
     };
 
     const handleCloseEdit = () => {
         setContentEditorOpen(false);
+        setItemToUpdate(null);
     };
 
     const handleSubmitContent = () => {
-        createContentMutation.mutate({
-            data: {
-                userId: user._id,
-                mediaId: params.id,
-                collection: params.collection,
-                title,
-                content: code,
-            },
-        });
-        setContentEditorOpen(false);
+        if (itemToUpdate === null) {
+            createContentMutation.mutate({
+                data: {
+                    userId: user._id,
+                    mediaId: params.id,
+                    collection: params.collection,
+                    title,
+                    content: code,
+                },
+            });
+            setContentEditorOpen(false);
+        } else {
+            updateContentMutation.mutate({
+                data: {
+                    userId: user._id,
+                    mediaId: params.id,
+                    collection: params.collection,
+                    index: itemToUpdate,
+                    title,
+                    content: code,
+                },
+            });
+            setItemToUpdate(null);
+        }
     };
 
     const hanleRemoveContent = (indexToDelete: number) => {
-        console.log({ indexToDelete });
         removeContentMutation.mutate({
             data: {
                 userId: user._id,
                 mediaId: params.id,
                 collection: params.collection,
-                index: indexToDelete,  
+                index: indexToDelete,
             },
         });
     }
@@ -88,6 +114,17 @@ function RouteComponent() {
         },
     });
 
+    const updateContentMutation = useMutation({
+        mutationFn: updateContent,
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: [params.collection, params.id] });
+            notify({ message: "A content was updated", severity: Severity.MSG });
+        },
+        onError: (error) => {
+            notify({ message: error.message, severity: Severity.ERR });
+        },
+    });
+
     const removeContentMutation = useMutation({
         mutationFn: removeContent,
         onSuccess: async () => {
@@ -105,7 +142,7 @@ function RouteComponent() {
         <>
             <button
                 className="fixed z-10 top-20 right-6 size-12 text-2xl rounded-full border-2 border-blue-400 flex items-center justify-center opacity-60"
-                onClick={handleAddContent}
+                onClick={startAddContent}
             >
                 +
             </button>
@@ -118,10 +155,16 @@ function RouteComponent() {
                     >
                         <span className="text-xl">{extra.title}</span>
                         <div className="ms-2 flex gap-4">
-                            <button className="cursor-pointer">
+                            <button
+                                className="cursor-pointer"
+                                onClick={startUpdateContent(extra)}
+                            >
                                 <PencilIcon className="size-5 text-blue-400" />
                             </button>
-                            <button className="cursor-pointer" onClick={() => setItemToDelete({ id: extra.id, title: extra.title })}>
+                            <button
+                                className="cursor-pointer"
+                                onClick={startRemoveContent(extra)}
+                            >
                                 <TrashIcon className="size-5 text-blue-400" />
                             </button>
                             <button className="ml-auto cursor-pointer">
@@ -144,7 +187,7 @@ function RouteComponent() {
 
             <ClientOnly>
                 <ContentEditor
-                    isOpen={isContentEditorOpen}
+                    isOpen={isContentEditorOpen || itemToUpdate !== null}
                     title={title}
                     code={code}
                     onClose={handleCloseEdit}
