@@ -1,4 +1,4 @@
-import { RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { GraphEditor } from "./GraphEditor";
 
@@ -121,7 +121,7 @@ export function MovieForm(
                                 }}
                             >
                                 <div>Storyline</div>
-                                <RectangleGroupIcon className="size-6 text-blue-400" />
+                                <SparklesIcon className="size-6 text-blue-400" />
                             </button>
                         </div>
                         <button

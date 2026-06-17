@@ -1,4 +1,4 @@
-import { RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon } from "@heroicons/react/24/outline";
 import { GraphEditor } from "./GraphEditor";
 import { useState } from "react";
 
@@ -122,7 +122,7 @@ export function BookForm(
                                 }}
                             >
                                 <div>Storyline</div>
-                                <RectangleGroupIcon className="size-6 text-blue-400" />
+                                <SparklesIcon className="size-6 text-blue-400" />
                             </button>
                         </div>
                         <button

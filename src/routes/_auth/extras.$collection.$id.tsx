@@ -1,7 +1,8 @@
 import { PencilIcon, SparklesIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import z from "zod";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
 import { ContentEditor } from "~/components/ContentEditor";
 import { Severity, useNotification } from "~/components/notifications";
@@ -16,6 +17,10 @@ export const extrasQueryOptions = (collection: string, mediaId: string) =>
     });
 
 export const Route = createFileRoute("/_auth/extras/$collection/$id")({
+    parseParams: (rawParams) => ({
+        id: z.string().parse(rawParams.id),
+        collection: z.enum(["books", "movies"]).parse(rawParams.collection),
+    }),
     loader: async ({ params, context: { queryClient } }) => {
         await queryClient.ensureQueryData(extrasQueryOptions(params.collection, params.id));
         return { pageName: "Extra content" };
@@ -167,9 +172,13 @@ function RouteComponent() {
                             >
                                 <TrashIcon className="size-5 text-blue-400" />
                             </button>
-                            <button className="ml-auto cursor-pointer">
+                            <Link
+                                className="ml-auto cursor-pointer"
+                                to="/content/$collection/$id/$index"
+                                params={{ ...params, index: extra.id }}
+                            >
                                 <SparklesIcon className="size-5 text-blue-400" />
-                            </button>
+                            </Link>
                         </div>
                     </div>)
                 )}

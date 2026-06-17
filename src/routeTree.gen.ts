@@ -23,6 +23,7 @@ import { Route as AuthMoviesNewRouteImport } from './routes/_auth/movies.new'
 import { Route as AuthMoviesIdRouteImport } from './routes/_auth/movies.$id'
 import { Route as AuthBooksNewRouteImport } from './routes/_auth/books.new'
 import { Route as AuthBooksIdRouteImport } from './routes/_auth/books.$id'
+import { Route as ContentCollectionIdIndexRouteImport } from './routes/content.$collection.$id.$index'
 import { Route as AuthExtrasCollectionIdRouteImport } from './routes/_auth/extras.$collection.$id'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -94,6 +95,12 @@ const AuthBooksIdRoute = AuthBooksIdRouteImport.update({
   path: '/books/$id',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const ContentCollectionIdIndexRoute =
+  ContentCollectionIdIndexRouteImport.update({
+    id: '/content/$collection/$id/$index',
+    path: '/content/$collection/$id/$index',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthExtrasCollectionIdRoute = AuthExtrasCollectionIdRouteImport.update({
   id: '/extras/$collection/$id',
   path: '/extras/$collection/$id',
@@ -115,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
+  '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesByTo {
   '/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
+  '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -149,6 +158,7 @@ export interface FileRoutesById {
   '/_auth/movies/new': typeof AuthMoviesNewRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/_auth/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
+  '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/movies/new'
     | '/graph/$type/$id'
     | '/extras/$collection/$id'
+    | '/content/$collection/$id/$index'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/movies/new'
     | '/graph/$type/$id'
     | '/extras/$collection/$id'
+    | '/content/$collection/$id/$index'
   id:
     | '__root__'
     | '/'
@@ -200,6 +212,7 @@ export interface FileRouteTypes {
     | '/_auth/movies/new'
     | '/graph/$type/$id'
     | '/_auth/extras/$collection/$id'
+    | '/content/$collection/$id/$index'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -212,6 +225,7 @@ export interface RootRouteChildren {
   UserIdBooksRoute: typeof UserIdBooksRoute
   UserIdMoviesRoute: typeof UserIdMoviesRoute
   GraphTypeIdRoute: typeof GraphTypeIdRoute
+  ContentCollectionIdIndexRoute: typeof ContentCollectionIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -314,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthBooksIdRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/content/$collection/$id/$index': {
+      id: '/content/$collection/$id/$index'
+      path: '/content/$collection/$id/$index'
+      fullPath: '/content/$collection/$id/$index'
+      preLoaderRoute: typeof ContentCollectionIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/extras/$collection/$id': {
       id: '/_auth/extras/$collection/$id'
       path: '/extras/$collection/$id'
@@ -356,6 +377,7 @@ const rootRouteChildren: RootRouteChildren = {
   UserIdBooksRoute: UserIdBooksRoute,
   UserIdMoviesRoute: UserIdMoviesRoute,
   GraphTypeIdRoute: GraphTypeIdRoute,
+  ContentCollectionIdIndexRoute: ContentCollectionIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

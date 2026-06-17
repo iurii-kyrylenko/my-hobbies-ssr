@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
 
@@ -61,12 +61,12 @@ export function MediaCardBase({
                         <Link to={editLink.to} params={editLink.params}>
                             <PencilIcon className="size-5 text-blue-400" />
                         </Link>
-                        <Link to={extrasLink.to} params={extrasLink.params}>
-                            <Cog6ToothIcon className="size-5 text-blue-400" />
-                        </Link>
                         <button className="cursor-pointer" onClick={onDelete}>
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
+                        <Link to={extrasLink.to} params={extrasLink.params}>
+                            <RectangleGroupIcon className="size-5 text-blue-400" />
+                        </Link>
                     </>
                 )}
                 {storyline && (
