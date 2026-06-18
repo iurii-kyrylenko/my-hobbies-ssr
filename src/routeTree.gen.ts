@@ -19,6 +19,7 @@ import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as UserIdMoviesRouteImport } from './routes/$userId.movies'
 import { Route as UserIdBooksRouteImport } from './routes/$userId.books'
 import { Route as GraphTypeIdRouteImport } from './routes/graph.$type.$id'
+import { Route as ExtrasPubCollectionIdRouteImport } from './routes/extras-pub.$collection.$id'
 import { Route as AuthMoviesNewRouteImport } from './routes/_auth/movies.new'
 import { Route as AuthMoviesIdRouteImport } from './routes/_auth/movies.$id'
 import { Route as AuthBooksNewRouteImport } from './routes/_auth/books.new'
@@ -75,6 +76,11 @@ const GraphTypeIdRoute = GraphTypeIdRouteImport.update({
   path: '/graph/$type/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExtrasPubCollectionIdRoute = ExtrasPubCollectionIdRouteImport.update({
+  id: '/extras-pub/$collection/$id',
+  path: '/extras-pub/$collection/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthMoviesNewRoute = AuthMoviesNewRouteImport.update({
   id: '/movies/new',
   path: '/movies/new',
@@ -120,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/books/new': typeof AuthBooksNewRoute
   '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
+  '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/books/new': typeof AuthBooksNewRoute
   '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
+  '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/_auth/books/new': typeof AuthBooksNewRoute
   '/_auth/movies/$id': typeof AuthMoviesIdRoute
   '/_auth/movies/new': typeof AuthMoviesNewRoute
+  '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
   '/graph/$type/$id': typeof GraphTypeIdRoute
   '/_auth/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/books/new'
     | '/movies/$id'
     | '/movies/new'
+    | '/extras-pub/$collection/$id'
     | '/graph/$type/$id'
     | '/extras/$collection/$id'
     | '/content/$collection/$id/$index'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/books/new'
     | '/movies/$id'
     | '/movies/new'
+    | '/extras-pub/$collection/$id'
     | '/graph/$type/$id'
     | '/extras/$collection/$id'
     | '/content/$collection/$id/$index'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/_auth/books/new'
     | '/_auth/movies/$id'
     | '/_auth/movies/new'
+    | '/extras-pub/$collection/$id'
     | '/graph/$type/$id'
     | '/_auth/extras/$collection/$id'
     | '/content/$collection/$id/$index'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   UserIdBooksRoute: typeof UserIdBooksRoute
   UserIdMoviesRoute: typeof UserIdMoviesRoute
+  ExtrasPubCollectionIdRoute: typeof ExtrasPubCollectionIdRoute
   GraphTypeIdRoute: typeof GraphTypeIdRoute
   ContentCollectionIdIndexRoute: typeof ContentCollectionIdIndexRoute
 }
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/graph/$type/$id'
       fullPath: '/graph/$type/$id'
       preLoaderRoute: typeof GraphTypeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/extras-pub/$collection/$id': {
+      id: '/extras-pub/$collection/$id'
+      path: '/extras-pub/$collection/$id'
+      fullPath: '/extras-pub/$collection/$id'
+      preLoaderRoute: typeof ExtrasPubCollectionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/movies/new': {
@@ -376,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   UserIdBooksRoute: UserIdBooksRoute,
   UserIdMoviesRoute: UserIdMoviesRoute,
+  ExtrasPubCollectionIdRoute: ExtrasPubCollectionIdRoute,
   GraphTypeIdRoute: GraphTypeIdRoute,
   ContentCollectionIdIndexRoute: ContentCollectionIdIndexRoute,
 }

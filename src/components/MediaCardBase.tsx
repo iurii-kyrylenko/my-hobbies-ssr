@@ -26,16 +26,6 @@ export function MediaCardBase({
 }: MediaCardBaseProps) {
     const isOwner = userId === ownerId;
 
-    const editLink = {
-        to: `/${collection}/$id`,
-        params: { id: mediaId },
-    };
-
-    const extrasLink = {
-        to: "/extras/$collection/$id",
-        params: { collection, id: mediaId },
-    };
-
     return (
         <div className="p-2 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50">
             {/* Header Section */}
@@ -58,16 +48,21 @@ export function MediaCardBase({
             <div className="m-2 mt-4 flex gap-6">
                 {isOwner && (
                     <>
-                        <Link to={editLink.to} params={editLink.params}>
+                        <Link to={`/${collection}/$id`} params={{ id: mediaId }}>
                             <PencilIcon className="size-5 text-blue-400" />
                         </Link>
                         <button className="cursor-pointer" onClick={onDelete}>
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
-                        <Link to={extrasLink.to} params={extrasLink.params}>
+                        <Link to="/extras/$collection/$id" params={{ collection, id: mediaId }}>
                             <RectangleGroupIcon className="size-5 text-blue-400" />
                         </Link>
                     </>
+                )}
+                {!isOwner && (
+                    <Link to="/extras-pub/$collection/$id" params={{ collection, id: mediaId }}>
+                        <RectangleGroupIcon className="size-5 text-blue-400" />
+                    </Link>
                 )}
                 {storyline && (
                     <Link
