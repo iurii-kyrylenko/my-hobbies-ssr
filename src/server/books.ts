@@ -12,6 +12,19 @@ interface BookDoc {
     mode: string;
     googleBookId: string;
     storyline: string;
+    extras: string[];
+}
+
+interface BookAggr {
+    _id: ObjectId;
+    userId: ObjectId;
+    title: string;
+    author: string;
+    completed: Date;
+    mode: string;
+    googleBookId: string;
+    hasStoryline: boolean;
+    extrasCount: number;
 }
 
 interface BookBase {
@@ -26,10 +39,12 @@ interface BookBase {
 
 interface Book extends BookBase {
     storyline: string;
+    extras: string[];
 }
 
 export interface BookReview extends BookBase {
     hasStoryline: boolean;
+    extrasCount: number;
 }
 
 export interface BooksPage {
@@ -54,23 +69,39 @@ export const getPageBooks = createServerFn({ method: "GET" })
 
         const db = await connectToDatabase();
 
-        const documents = await db
-            .collection<BookDoc>("books")
-            .find({
-                userId: new ObjectId(data.userId),
-                ...filterCondition(data.filter),
-            })
+        const documents = await db.collection("books")
+            .aggregate<BookAggr>([
+                {
+                    $match: { userId: new ObjectId(data.userId), ...filterCondition(data.filter) }
+                },
+                {
+                    $set: {
+                        hasStoryline: {
+                            $gt: [{ $strLenCP: { $ifNull: ["$storyline", ""] } }, 0],
+                        },
+                        extrasCount: {
+                            $cond: {
+                                if: { $isArray: "$extras" },
+                                then: { $size: "$extras" },
+                                else: 0,
+                            }
+                        },
+                    }
+                },
+                {
+                    $unset: ["extras", "storyline"],
+                },
+            ])
             .sort({ completed: -1, _id: -1 })
             .skip(skipAmount)
             .limit(pageSize)
             .toArray();
 
-        const books = documents.map(({ storyline, ...book }) => ({
+        const books = documents.map((book) => ({
             ...book,
             _id: book._id.toString(),
             userId: book.userId.toString(),
             completed: book.completed.toISOString().substring(0, 10),
-            hasStoryline: !!storyline,
         }));
 
         return { books, page: data.page };
@@ -108,8 +139,12 @@ export const getBook = createServerFn({ method: "GET" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        const document = await db.collection<BookDoc>("books")
-            .findOne({ _id: new ObjectId(data.bookId), userId: new ObjectId(data.userId) });
+        const document = await db.collection("books")
+            .aggregate<BookDoc>([
+                { $match: { _id: new ObjectId(data.bookId), userId: new ObjectId(data.userId) } },
+                { $unset: ["extras"] },
+            ])
+            .next();
 
         if (!document) {
             throw new Error(`Book '${data.bookId}' not found`);
@@ -126,7 +161,7 @@ export const getBook = createServerFn({ method: "GET" })
     });
 
 export const updateBook = createServerFn({ method: "POST" })
-    .inputValidator((data: Book) => data)
+    .inputValidator((data: Omit<Book, "extras">) => data)
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
@@ -151,7 +186,7 @@ export const createBook = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        await db.collection<Omit<BookDoc, '_id'>>("books")
+        await db.collection<Omit<BookDoc, "_id" | "extras">>("books")
             .insertOne({ ...data, userId: new ObjectId(data.userId) });
     });
 

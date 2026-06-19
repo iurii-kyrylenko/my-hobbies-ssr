@@ -2,6 +2,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react
 import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
+import { LinkToExtra } from "./LinkToExtra";
 
 interface MediaCardBaseProps {
     userId?: string;
@@ -9,6 +10,7 @@ interface MediaCardBaseProps {
     onDelete: () => void;
     mediaId: string;
     collection: "books" | "movies";
+    extrasCount: number;
     storyline?: { type: "book" | "movie"; id: string };
     header: ReactNode;
     children: ReactNode; // The Info component (BookInfo or MovieInfo)
@@ -20,6 +22,7 @@ export function MediaCardBase({
     onDelete,
     mediaId,
     collection,
+    extrasCount,
     storyline,
     header,
     children,
@@ -54,16 +57,14 @@ export function MediaCardBase({
                         <button className="cursor-pointer" onClick={onDelete}>
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
-                        <Link to="/extras/$collection/$id" params={{ collection, id: mediaId }}>
-                            <RectangleGroupIcon className="size-5 text-blue-400" />
-                        </Link>
                     </>
                 )}
-                {!isOwner && (
-                    <Link to="/extras-pub/$collection/$id" params={{ collection, id: mediaId }}>
-                        <RectangleGroupIcon className="size-5 text-blue-400" />
-                    </Link>
-                )}
+                <LinkToExtra
+                    isOwner={isOwner}
+                    collection={collection}
+                    mediaId={mediaId}
+                    extrasCount={extrasCount}
+                />
                 {storyline && (
                     <Link
                         className={isOwner ? "ml-auto" : ""}

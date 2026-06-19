@@ -14,6 +14,7 @@ export function MovieCard({ movie, userId, onDeleteMovie }: {
             onDelete={onDeleteMovie}
             mediaId={movie._id}
             collection="movies"
+            extrasCount={movie.extrasCount}
             storyline={movie.hasStoryline ? { type: "movie", id: movie._id } : undefined}
             header={
                 <>

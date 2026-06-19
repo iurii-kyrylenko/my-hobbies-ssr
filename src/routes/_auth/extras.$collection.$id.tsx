@@ -85,7 +85,6 @@ function RouteComponent() {
                     content: code,
                 },
             });
-            setItemToUpdate(null);
         }
     };
 
@@ -123,6 +122,8 @@ function RouteComponent() {
         mutationFn: updateContent,
         onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: [params.collection, params.id] });
+            await queryClient.invalidateQueries({ queryKey: ["content", params.collection, params.id, itemToUpdate] });
+            setItemToUpdate(null);
             notify({ message: "A content was updated", severity: Severity.MSG });
         },
         onError: (error) => {

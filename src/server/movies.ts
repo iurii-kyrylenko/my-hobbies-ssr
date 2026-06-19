@@ -12,6 +12,19 @@ interface MovieDoc {
     completed: Date;
     imdbId: string;
     storyline: string;
+    extras: string[];
+}
+
+interface MovieAggr {
+    _id: ObjectId;
+    userId: ObjectId;
+    title: string;
+    year: string;
+    notes: string;
+    completed: Date;
+    imdbId: string;
+    hasStoryline: boolean;
+    extrasCount: number;
 }
 
 interface MovieBase {
@@ -26,10 +39,12 @@ interface MovieBase {
 
 interface Movie extends MovieBase {
     storyline: string;
+    extras: string[];
 }
 
 export interface MovieReview extends MovieBase {
     hasStoryline: boolean;
+    extrasCount: number;
 }
 
 export interface MoviesPage {
@@ -54,23 +69,39 @@ export const getPageMovies = createServerFn({ method: "GET" })
 
         const db = await connectToDatabase();
 
-        const documents = await db
-            .collection<MovieDoc>("movies")
-            .find({
-                userId: new ObjectId(data.userId),
-                ...filterCondition(data.filter),
-            })
+        const documents = await db.collection("movies")
+            .aggregate<MovieAggr>([
+                {
+                    $match: { userId: new ObjectId(data.userId), ...filterCondition(data.filter) }
+                },
+                {
+                    $set: {
+                        hasStoryline: {
+                            $gt: [{ $strLenCP: { $ifNull: ["$storyline", ""] } }, 0],
+                        },
+                        extrasCount: {
+                            $cond: {
+                                if: { $isArray: "$extras" },
+                                then: { $size: "$extras" },
+                                else: 0,
+                            }
+                        },
+                    }
+                },
+                {
+                    $unset: ["extras", "storyline"],
+                },
+            ])
             .sort({ completed: -1, _id: -1 })
             .skip(skipAmount)
             .limit(pageSize)
             .toArray();
 
-        const movies = documents.map(({ storyline, ...movie }) => ({
+        const movies = documents.map((movie) => ({
             ...movie,
             _id: movie._id.toString(),
             userId: movie.userId.toString(),
             completed: movie.completed.toISOString().substring(0, 10),
-            hasStoryline: !!storyline,
         }));
 
         return { movies, page: data.page };
@@ -109,8 +140,12 @@ export const getMovie = createServerFn({ method: "GET" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        const document = await db.collection<MovieDoc>("movies")
-            .findOne({ _id: new ObjectId(data.movieId), userId: new ObjectId(data.userId) });
+        const document = await db.collection("movies")
+            .aggregate<MovieDoc>([
+                { $match: { _id: new ObjectId(data.movieId), userId: new ObjectId(data.userId) } },
+                { $unset: ["extras"] },
+            ])
+            .next();
 
         if (!document) {
             throw new Error(`Movie '${data.movieId}' not found`);
@@ -127,7 +162,7 @@ export const getMovie = createServerFn({ method: "GET" })
     });
 
 export const updateMovie = createServerFn({ method: "POST" })
-    .inputValidator((data: Movie) => data)
+    .inputValidator((data: Omit<Movie, "extras">) => data)
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
@@ -152,7 +187,7 @@ export const createMovie = createServerFn({ method: "POST" })
     .handler(async ({ data }) => {
         const db = await connectToDatabase();
 
-        await db.collection<Omit<MovieDoc, '_id'>>("movies")
+        await db.collection<Omit<MovieDoc, "_id" | "extras">>("movies")
             .insertOne({ ...data, userId: new ObjectId(data.userId) });
     });
 
