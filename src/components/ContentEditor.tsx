@@ -1,10 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import EditorComponent from "react-simple-code-editor";
-import prism from 'prismjs';
-import "prismjs/components/prism-dot"; // DOT language support
-import "prismjs/components/prism-mermaid"; // MMD support
-import "prismjs/themes/prism-tomorrow.css"; // A dark theme for Prism
+import { useHighlight } from "./useHighlight";
 
 const Editor = (EditorComponent as any).default || EditorComponent;
 
@@ -17,7 +14,9 @@ export function ContentEditor({ isOpen, title, code, onClose, onSubmit, onTitleC
     onTitleChange: (title: string) => void,
     onCodeChange: (code: string) => void,
 }) {
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const { highlight } = useHighlight();
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         onSubmit();
     };
@@ -29,7 +28,6 @@ export function ContentEditor({ isOpen, title, code, onClose, onSubmit, onTitleC
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
-                {/* Overlay */}
                 <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -44,7 +42,6 @@ export function ContentEditor({ isOpen, title, code, onClose, onSubmit, onTitleC
 
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        {/* Dialog Content */}
                         <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -80,11 +77,7 @@ export function ContentEditor({ isOpen, title, code, onClose, onSubmit, onTitleC
                                             required
                                             value={code}
                                             onValueChange={onCodeChange}
-                                            highlight={(code: string) => (
-                                                code.startsWith("%% mmd")
-                                                    ? prism.highlight(code, prism.languages.mermaid, "mermaid")
-                                                    : prism.highlight(code, prism.languages.dot, "dot")
-                                            )}
+                                            highlight={highlight}
                                             padding={10}
                                             className="font-mono text-xs border border-[#aaa]"
                                         />

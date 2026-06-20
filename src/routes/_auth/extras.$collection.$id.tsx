@@ -1,6 +1,6 @@
 import { PencilIcon, SparklesIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { queryOptions, useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import z from "zod";
 import ConfirmationDialog from "~/components/ConfirmationDialog";
@@ -195,17 +195,15 @@ function RouteComponent() {
                 message={`Do you want to delete content "${itemToDelete?.title}"?`}
             />
 
-            <ClientOnly>
-                <ContentEditor
-                    isOpen={isContentEditorOpen || itemToUpdate !== null}
-                    title={title}
-                    code={code}
-                    onClose={handleCloseEdit}
-                    onSubmit={handleSubmitContent}
-                    onTitleChange={handleEditTitleChange}
-                    onCodeChange={handleEditContentChange}
-                />
-            </ClientOnly>
+            <ContentEditor
+                isOpen={isContentEditorOpen || itemToUpdate !== null}
+                title={title}
+                code={code}
+                onClose={handleCloseEdit}
+                onSubmit={handleSubmitContent}
+                onTitleChange={handleEditTitleChange}
+                onCodeChange={handleEditContentChange}
+            />
         </>
     );
 }

@@ -1,10 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import EditorComponent from "react-simple-code-editor";
-import prism from 'prismjs';
-import "prismjs/components/prism-dot"; // DOT language support
-import "prismjs/components/prism-mermaid"; // MMD support
-import "prismjs/themes/prism-tomorrow.css"; // A dark theme for Prism
+import { useHighlight } from "./useHighlight";
 
 const Editor = (EditorComponent as any).default || EditorComponent;
 
@@ -14,6 +11,8 @@ export function GraphEditor({ isOpen, onClose, onChange, code }: {
     onChange: (code: string) => void,
     code: string,
 }) {
+    const { highlight } = useHighlight();
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -54,11 +53,7 @@ export function GraphEditor({ isOpen, onClose, onChange, code }: {
                                         autoFocus
                                         value={code}
                                         onValueChange={onChange}
-                                        highlight={(code: string) => (
-                                            code.startsWith("%% mmd")
-                                                ? prism.highlight(code, prism.languages.mermaid, "mermaid")
-                                                : prism.highlight(code, prism.languages.dot, "dot")
-                                        )}
+                                        highlight={highlight}
                                         padding={10}
                                         className="font-mono text-xs border border-[#aaa]"
                                     />
