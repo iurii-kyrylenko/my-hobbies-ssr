@@ -27,16 +27,14 @@ function RouteComponent() {
                     className="p-3 shadow-sm bg-white dark:bg-black dark:shadow-gray-500/50 flex flex-col gap-4"
                     key={extra.id}
                 >
-                    <span className="text-xl">{extra.title}</span>
-                    <div className="ms-2 flex gap-4">
-                        <Link
-                            className="cursor-pointer"
-                            to="/content/$collection/$id/$index"
-                            params={{ ...params, index: extra.id }}
-                        >
-                            <SparklesIcon className="size-5 text-blue-400" />
-                        </Link>
-                    </div>
+                    <Link
+                        className="cursor-pointer flex gap-2"
+                        to="/content/$collection/$id/$index"
+                        params={{ ...params, index: extra.id }}
+                    >
+                        <SparklesIcon className="size-5 text-blue-400" />
+                        <span className="text-sm hover:underline">{extra.title}</span>
+                    </Link>
                 </div>)
             )}
         </div>

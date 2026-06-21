@@ -5,6 +5,7 @@ import { ArrowPathIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 import { getGraphSvg } from "~/server/components/getGraphSvg";
 import { CompositeComponent } from "@tanstack/react-start/rsc";
 import { Severity, useNotification } from "~/components/notifications";
+import { useSvgPanZoom } from "~/components/useSvgPanZoom";
 
 const graphQueryOptions = (params: { type: string, id: string }) => queryOptions({
     queryKey: ["graph", params.type, params.id],
@@ -33,53 +34,9 @@ export const Route = createFileRoute('/graph/$type/$id')({
 function RouteComponent() {
     const params = Route.useParams();
     const { data: src, isError, error } = useSuspenseQuery(graphQueryOptions(params));
-    const panZoomRef = useRef<any>(null);
+    useSvgPanZoom(src);
     const [copied, setCopied] = useState(false);
     const notify = useNotification();
-
-    // Pan / Zoom support
-    useEffect(() => {
-        // The flag used in "Ignore Pattern" to prevent race condition
-        let ignore = false;
-
-        let resizeListener: (() => void) | null = null;
-
-        const init = async () => {
-            const container = document.getElementById("graph-container");
-            const svgElement = container?.querySelector("svg");
-            if (!svgElement) return;
-
-            const module = await import("svg-pan-zoom");
-            if (ignore) return; // Ignore stale resolution
-
-            panZoomRef.current = module.default(svgElement, {
-                zoomEnabled: true,
-                controlIconsEnabled: true,
-                fit: true,
-                center: true,
-            });
-
-            resizeListener = () => {
-                try {
-                    panZoomRef.current?.resize().fit().center();
-                } catch (e) {
-                    // Keeps the console clean during extreme window resizing
-                    // console.warn(e);
-                }
-            };
-
-            window.addEventListener("resize", resizeListener);
-        };
-
-        init();
-
-        return () => {
-            ignore = true; // Mark as stale
-            panZoomRef.current?.destroy();
-            panZoomRef.current = null;
-            if (resizeListener) window.removeEventListener("resize", resizeListener);
-        };
-    }, [src]);
 
     if (isError) {
         notify({ message: error.message, severity: Severity.ERR })
