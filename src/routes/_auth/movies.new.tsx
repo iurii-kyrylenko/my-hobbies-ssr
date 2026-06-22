@@ -39,7 +39,6 @@ function RouteComponent() {
         notes: "",
         imdbId: "",
         completed: new Date().toISOString().substring(0, 10),
-        storyline: "",
     });
 
     const handleChange = (e: FormDataChangeEvent) => {

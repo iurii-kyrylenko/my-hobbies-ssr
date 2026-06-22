@@ -18,7 +18,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as UserIdMoviesRouteImport } from './routes/$userId.movies'
 import { Route as UserIdBooksRouteImport } from './routes/$userId.books'
-import { Route as GraphTypeIdRouteImport } from './routes/graph.$type.$id'
 import { Route as ExtrasPubCollectionIdRouteImport } from './routes/extras-pub.$collection.$id'
 import { Route as AuthMoviesNewRouteImport } from './routes/_auth/movies.new'
 import { Route as AuthMoviesIdRouteImport } from './routes/_auth/movies.$id'
@@ -69,11 +68,6 @@ const UserIdMoviesRoute = UserIdMoviesRouteImport.update({
 const UserIdBooksRoute = UserIdBooksRouteImport.update({
   id: '/$userId/books',
   path: '/$userId/books',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GraphTypeIdRoute = GraphTypeIdRouteImport.update({
-  id: '/graph/$type/$id',
-  path: '/graph/$type/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExtrasPubCollectionIdRoute = ExtrasPubCollectionIdRouteImport.update({
@@ -127,7 +121,6 @@ export interface FileRoutesByFullPath {
   '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
   '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
-  '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
@@ -145,7 +138,6 @@ export interface FileRoutesByTo {
   '/movies/$id': typeof AuthMoviesIdRoute
   '/movies/new': typeof AuthMoviesNewRoute
   '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
-  '/graph/$type/$id': typeof GraphTypeIdRoute
   '/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
@@ -165,7 +157,6 @@ export interface FileRoutesById {
   '/_auth/movies/$id': typeof AuthMoviesIdRoute
   '/_auth/movies/new': typeof AuthMoviesNewRoute
   '/extras-pub/$collection/$id': typeof ExtrasPubCollectionIdRoute
-  '/graph/$type/$id': typeof GraphTypeIdRoute
   '/_auth/extras/$collection/$id': typeof AuthExtrasCollectionIdRoute
   '/content/$collection/$id/$index': typeof ContentCollectionIdIndexRoute
 }
@@ -185,7 +176,6 @@ export interface FileRouteTypes {
     | '/movies/$id'
     | '/movies/new'
     | '/extras-pub/$collection/$id'
-    | '/graph/$type/$id'
     | '/extras/$collection/$id'
     | '/content/$collection/$id/$index'
   fileRoutesByTo: FileRoutesByTo
@@ -203,7 +193,6 @@ export interface FileRouteTypes {
     | '/movies/$id'
     | '/movies/new'
     | '/extras-pub/$collection/$id'
-    | '/graph/$type/$id'
     | '/extras/$collection/$id'
     | '/content/$collection/$id/$index'
   id:
@@ -222,7 +211,6 @@ export interface FileRouteTypes {
     | '/_auth/movies/$id'
     | '/_auth/movies/new'
     | '/extras-pub/$collection/$id'
-    | '/graph/$type/$id'
     | '/_auth/extras/$collection/$id'
     | '/content/$collection/$id/$index'
   fileRoutesById: FileRoutesById
@@ -237,7 +225,6 @@ export interface RootRouteChildren {
   UserIdBooksRoute: typeof UserIdBooksRoute
   UserIdMoviesRoute: typeof UserIdMoviesRoute
   ExtrasPubCollectionIdRoute: typeof ExtrasPubCollectionIdRoute
-  GraphTypeIdRoute: typeof GraphTypeIdRoute
   ContentCollectionIdIndexRoute: typeof ContentCollectionIdIndexRoute
 }
 
@@ -304,13 +291,6 @@ declare module '@tanstack/react-router' {
       path: '/$userId/books'
       fullPath: '/$userId/books'
       preLoaderRoute: typeof UserIdBooksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/graph/$type/$id': {
-      id: '/graph/$type/$id'
-      path: '/graph/$type/$id'
-      fullPath: '/graph/$type/$id'
-      preLoaderRoute: typeof GraphTypeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/extras-pub/$collection/$id': {
@@ -397,7 +377,6 @@ const rootRouteChildren: RootRouteChildren = {
   UserIdBooksRoute: UserIdBooksRoute,
   UserIdMoviesRoute: UserIdMoviesRoute,
   ExtrasPubCollectionIdRoute: ExtrasPubCollectionIdRoute,
-  GraphTypeIdRoute: GraphTypeIdRoute,
   ContentCollectionIdIndexRoute: ContentCollectionIdIndexRoute,
 }
 export const routeTree = rootRouteImport

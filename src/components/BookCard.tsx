@@ -15,7 +15,6 @@ export function BookCard({ book, userId, onDeleteBook }: {
             mediaId={book._id}
             collection="books"
             extrasCount={book.extrasCount}
-            storyline={book.hasStoryline ? { type: "book", id: book._id } : undefined}
             header={
                 <>
                     <div className="text-sm font-bold">{book.title}</div>

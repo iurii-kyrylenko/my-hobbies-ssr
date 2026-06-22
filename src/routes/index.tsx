@@ -70,6 +70,9 @@ function Home() {
                 Change log:
                 <ul className="list-disc pl-8">
                     <li>
+                        June 22, 2026: Instead of a single storyline per media item, support collection of "extras" (dot or mermaid contents).
+                    </li>
+                    <li>
                         May 18, 2026: Add mermaid syntax support to show the storyline.
                     </li>
                     <li>

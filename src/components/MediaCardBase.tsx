@@ -1,5 +1,5 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
-import { ChevronDownIcon, PencilIcon, TrashIcon, SparklesIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Link } from "@tanstack/react-router";
 import { ReactNode } from "react";
 import { LinkToExtra } from "./LinkToExtra";
@@ -11,7 +11,6 @@ interface MediaCardBaseProps {
     mediaId: string;
     collection: "books" | "movies";
     extrasCount: number;
-    storyline?: { type: "book" | "movie"; id: string };
     header: ReactNode;
     children: ReactNode; // The Info component (BookInfo or MovieInfo)
 }
@@ -23,7 +22,6 @@ export function MediaCardBase({
     mediaId,
     collection,
     extrasCount,
-    storyline,
     header,
     children,
 }: MediaCardBaseProps) {
@@ -65,15 +63,6 @@ export function MediaCardBase({
                     mediaId={mediaId}
                     extrasCount={extrasCount}
                 />
-                {storyline && (
-                    <Link
-                        className={isOwner ? "ml-auto" : ""}
-                        to="/graph/$type/$id"
-                        params={{ type: storyline.type, id: storyline.id }}
-                    >
-                        <SparklesIcon className="size-5 text-blue-400" />
-                    </Link>
-                )}
             </div>
         </div>
     );

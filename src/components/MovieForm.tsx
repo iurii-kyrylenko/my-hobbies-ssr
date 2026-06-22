@@ -1,6 +1,4 @@
-import { SparklesIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { GraphEditor } from "./GraphEditor";
 
 export type MovieFormData = {
     title: string,
@@ -8,7 +6,6 @@ export type MovieFormData = {
     year: string,
     imdbId: string,
     completed: string,
-    storyline: string,
 };
 
 export type FormDataChangeEvent = {
@@ -112,18 +109,6 @@ export function MovieForm(
                                 onChange={onChange}
                             />
                         </div>
-                        <div>
-                            <button
-                                className="min-w-[300px] flex justify-between cursor-pointer"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    setIsGraphEditorOpen(true);
-                                }}
-                            >
-                                <div>Storyline</div>
-                                <SparklesIcon className="size-6 text-blue-400" />
-                            </button>
-                        </div>
                         <button
                             type="submit"
                             className="bg-blue-500 text-white mt-4 py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
@@ -133,18 +118,6 @@ export function MovieForm(
                     </fieldset>
                 </form>
             </div>
-
-            <GraphEditor
-                isOpen={isGraphEditorOpen}
-                onClose={() => setIsGraphEditorOpen(false)}
-                code={data.storyline}
-                onChange={(code) => onChange({
-                    target: {
-                        name: "storyline",
-                        value: code,
-                    }
-                })}
-            />
         </>
     );
 }

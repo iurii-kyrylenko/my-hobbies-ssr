@@ -11,7 +11,6 @@ interface MovieDoc {
     notes: string;
     completed: Date;
     imdbId: string;
-    storyline: string;
     extras: string[];
 }
 
@@ -23,7 +22,6 @@ interface MovieAggr {
     notes: string;
     completed: Date;
     imdbId: string;
-    hasStoryline: boolean;
     extrasCount: number;
 }
 
@@ -38,12 +36,10 @@ interface MovieBase {
 }
 
 interface Movie extends MovieBase {
-    storyline: string;
     extras: string[];
 }
 
 export interface MovieReview extends MovieBase {
-    hasStoryline: boolean;
     extrasCount: number;
 }
 
@@ -59,7 +55,6 @@ interface CreateMovie {
     notes: string;
     completed: Date;
     imdbId: string;
-    storyline: string;
 }
 
 export const getPageMovies = createServerFn({ method: "GET" })
@@ -76,9 +71,6 @@ export const getPageMovies = createServerFn({ method: "GET" })
                 },
                 {
                     $set: {
-                        hasStoryline: {
-                            $gt: [{ $strLenCP: { $ifNull: ["$storyline", ""] } }, 0],
-                        },
                         extrasCount: {
                             $cond: {
                                 if: { $isArray: "$extras" },
@@ -89,7 +81,7 @@ export const getPageMovies = createServerFn({ method: "GET" })
                     }
                 },
                 {
-                    $unset: ["extras", "storyline"],
+                    $unset: ["extras"],
                 },
             ])
             .sort({ completed: -1, _id: -1 })
@@ -157,7 +149,6 @@ export const getMovie = createServerFn({ method: "GET" })
             imdbId: document.imdbId,
             year: document.year,
             completed: document.completed.toISOString().substring(0, 10),
-            storyline: document.storyline ?? "",
         };
     });
 
@@ -176,7 +167,6 @@ export const updateMovie = createServerFn({ method: "POST" })
                         completed: new Date(data.completed),
                         year: data.year,
                         imdbId: data.imdbId,
-                        storyline: data.storyline,
                     },
                 }
             );

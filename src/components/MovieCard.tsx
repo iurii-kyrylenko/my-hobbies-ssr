@@ -15,7 +15,6 @@ export function MovieCard({ movie, userId, onDeleteMovie }: {
             mediaId={movie._id}
             collection="movies"
             extrasCount={movie.extrasCount}
-            storyline={movie.hasStoryline ? { type: "movie", id: movie._id } : undefined}
             header={
                 <>
                     <div className="text-sm font-bold text-blue-500">{movie.title}</div>

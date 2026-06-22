@@ -11,7 +11,6 @@ interface BookDoc {
     completed: Date;
     mode: string;
     googleBookId: string;
-    storyline: string;
     extras: string[];
 }
 
@@ -23,7 +22,6 @@ interface BookAggr {
     completed: Date;
     mode: string;
     googleBookId: string;
-    hasStoryline: boolean;
     extrasCount: number;
 }
 
@@ -38,12 +36,10 @@ interface BookBase {
 }
 
 interface Book extends BookBase {
-    storyline: string;
     extras: string[];
 }
 
 export interface BookReview extends BookBase {
-    hasStoryline: boolean;
     extrasCount: number;
 }
 
@@ -59,7 +55,6 @@ interface CreateBook {
     completed: Date;
     mode: string;
     googleBookId: string;
-    storyline: string;
 }
 
 export const getPageBooks = createServerFn({ method: "GET" })
@@ -76,9 +71,6 @@ export const getPageBooks = createServerFn({ method: "GET" })
                 },
                 {
                     $set: {
-                        hasStoryline: {
-                            $gt: [{ $strLenCP: { $ifNull: ["$storyline", ""] } }, 0],
-                        },
                         extrasCount: {
                             $cond: {
                                 if: { $isArray: "$extras" },
@@ -89,7 +81,7 @@ export const getPageBooks = createServerFn({ method: "GET" })
                     }
                 },
                 {
-                    $unset: ["extras", "storyline"],
+                    $unset: ["extras"],
                 },
             ])
             .sort({ completed: -1, _id: -1 })
@@ -156,7 +148,6 @@ export const getBook = createServerFn({ method: "GET" })
             googleBookId: document.googleBookId,
             mode: document.mode,
             completed: document.completed.toISOString().substring(0, 10),
-            storyline: document.storyline ?? "",
         };
     });
 
@@ -175,7 +166,6 @@ export const updateBook = createServerFn({ method: "POST" })
                         completed: new Date(data.completed),
                         mode: data.mode,
                         googleBookId: data.googleBookId,
-                        storyline: data.storyline,
                     },
                 }
             );
