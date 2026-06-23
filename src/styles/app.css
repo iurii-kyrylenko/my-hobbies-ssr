@@ -3,6 +3,10 @@
 /* Define dark mode to trigger when the .dark class is present */
 @variant dark (&:where(.dark, .dark *));
 
+@utility with-action {
+    @apply p-2 rounded-full active:border-blue-400 border-2 border-blue-400/0 transition-colors duration-200;
+}
+
 @layer base {
 
     *,

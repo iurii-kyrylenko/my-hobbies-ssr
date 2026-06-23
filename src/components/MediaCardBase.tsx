@@ -49,10 +49,15 @@ export function MediaCardBase({
             <div className="m-2 mt-4 flex gap-6">
                 {isOwner && (
                     <>
-                        <Link to={`/${collection}/$id`} params={{ id: mediaId }}>
+                        <Link
+                            className="with-action"
+                            to={`/${collection}/$id`} params={{ id: mediaId }}>
                             <PencilIcon className="size-5 text-blue-400" />
                         </Link>
-                        <button className="cursor-pointer" onClick={onDelete}>
+                        <button
+                            className="with-action cursor-pointer"
+                            onClick={onDelete}
+                        >
                             <TrashIcon className="size-5 text-blue-400" />
                         </button>
                     </>

@@ -29,7 +29,7 @@ export function LinkToExtra(
 
     return (
         <Link
-            className="flex items-baseline gap-1"
+            className="flex items-baseline with-action"
             {...linkProps}
         >
             <RectangleGroupIcon className="size-5 text-blue-400" />
